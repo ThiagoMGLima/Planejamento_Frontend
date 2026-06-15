@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Planejador de Rotina — Handoff de Design (MVP)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="handoff.css" rel="stylesheet">
+</head>
+<body>
+<div class="shell">
+
+  <!-- ───────── TOC ───────── -->
+  <nav class="toc">
+    <div class="brand"><span class="mark"></span><b>Planejador</b></div>
+    <p class="eyebrow">Handoff · MVP</p>
+    <ol>
+      <li><a href="#proto"><span class="n">01</span><span>Protótipo ao vivo</span></a></li>
+      <li><a href="#fundamentos"><span class="n">02</span><span>Fundamentos</span></a></li>
+      <li><a href="#tipografia"><span class="n">2.1</span><span>Tipografia</span></a></li>
+      <li><a href="#classes"><span class="n">2.2</span><span>Cores por classe</span></a></li>
+      <li><a href="#ui-cores"><span class="n">2.3</span><span>UI, estados & neutros</span></a></li>
+      <li><a href="#espacamento"><span class="n">2.4</span><span>Grade, espaço & sombras</span></a></li>
+      <li><a href="#componentes"><span class="n">03</span><span>Componentes</span></a></li>
+      <li><a href="#telas"><span class="n">04</span><span>Telas anotadas</span></a></li>
+      <li><a href="#comportamentos"><span class="n">05</span><span>Comportamentos</span></a></li>
+      <li><a href="#dados"><span class="n">06</span><span>Dados & estados</span></a></li>
+      <li><a href="#roadmap"><span class="n">07</span><span>Roadmap Fase 2</span></a></li>
+    </ol>
+    <p class="eyebrow" style="margin-top:24px">Fonte da verdade</p>
+    <p style="font-size:12px;color:var(--muted);line-height:1.5;margin:0">Código do protótipo:<br><code>core.jsx</code> · <code>views.jsx</code> · <code>panels.jsx</code> · <code>app.jsx</code></p>
+  </nav>
+
+  <!-- ───────── CONTENT ───────── -->
+  <main class="content">
+
+    <header class="doc-head">
+      <div class="wrap">
+        <p class="eyebrow">Handoff de Design · MVP Fase 1</p>
+        <h1>Planejador de Rotina</h1>
+        <p class="lede">Tudo que é preciso para construir o MVP: tokens visuais exatos, specs de componentes, telas anotadas, comportamentos e o modelo de dados. O estilo é o do protótipo aprovado (Direção C + sistema de classes da spec v1.1).</p>
+        <div class="meta">
+          <span class="tag live">● Protótipo interativo incluído</span>
+          <span class="tag">Web-first</span>
+          <span class="tag">React (sugerido)</span>
+          <span class="tag">Spec v1.1</span>
+          <span class="tag">15 jun 2026</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="wrap">
+
+      <!-- 01 PROTÓTIPO -->
+      <section id="proto">
+        <span class="sec-num">01</span>
+        <h2>Protótipo ao vivo</h2>
+        <p class="sub">Esta é a referência funcional definitiva. Troque entre <strong>Dia / Semana / Mês</strong>, arraste um item do <strong>Inbox</strong> para um horário, clique num evento para abrir o painel, e use <strong>Pendentes</strong> para concluir ou remarcar. O estado persiste no navegador.</p>
+        <div class="frame">
+          <div class="bar"><i style="background:#ec6a5e"></i><i style="background:#f4bf4f"></i><i style="background:#61c554"></i><span class="u">planejador.app — Semana</span></div>
+          <iframe src="Planejador.html" title="Protótipo do Planejador"></iframe>
+        </div>
+        <p class="cap">▲ Protótipo real embutido (Planejador.html). As telas das seções seguintes saem daqui.</p>
+        <div class="note"><p><b>Para construir com IA:</b> os valores deste documento espelham exatamente os tokens em <code>core.jsx</code>. Você pode colar o bloco <code>:root</code> da seção 2.4 e seguir as specs — ou apontar a IA direto para os arquivos <code>.jsx</code> do protótipo como base.</p></div>
+      </section>
+
+      <!-- 02 FUNDAMENTOS -->
+      <section id="fundamentos">
+        <span class="sec-num">02</span>
+        <h2>Fundamentos</h2>
+        <p>Três regras governam todo o visual e não devem ser quebradas:</p>
+        <ul class="clean">
+          <li><b>Cor = classe.</b> A cor de qualquer evento vem sempre da sua <em>classe</em> (tipo de atividade). Nunca use cor para significar outra coisa no calendário.</li>
+          <li><b>Estado = tratamento, não matiz.</b> Pendente e concluído são mostrados por borda/opacidade/ícone — mantendo a cor da classe.</li>
+          <li><b>Violeta é só da UI.</b> Hoje, seleção, linha do agora e ações primárias usam violeta. Nenhuma classe é violeta, para não competir com o significado.</li>
+        </ul>
+      </section>
+
+      <!-- 2.1 TIPOGRAFIA -->
+      <section id="tipografia">
+        <span class="sec-num">2.1</span>
+        <h2>Tipografia</h2>
+        <p class="sub">Duas famílias. <strong>Hanken Grotesk</strong> para toda a interface (neutra, legível). <strong>IBM Plex Mono</strong> para horários, datas e metadados — alinhamento tabular e ar de “ferramenta”.</p>
+        <div class="type-row"><span style="font-size:27px;font-weight:600;letter-spacing:-.02em">Título de seção / painel</span><span class="spec">Hanken · 27px / 600 · -0.02em</span></div>
+        <div class="type-row"><span style="font-size:16px;font-weight:600;letter-spacing:-.01em">Título de evento & cabeçalhos</span><span class="spec">Hanken · 16px / 600</span></div>
+        <div class="type-row"><span style="font-size:14.5px;font-weight:600">Rótulo de data · navegação</span><span class="spec">Hanken · 14.5px / 600</span></div>
+        <div class="type-row"><span style="font-size:13px;font-weight:400;color:#33333a">Corpo, descrições e listas</span><span class="spec">Hanken · 13–15px / 400</span></div>
+        <div class="type-row"><span style="font-size:11.5px;font-weight:600">Título dentro do bloco de evento</span><span class="spec">Hanken · 11.5px / 600</span></div>
+        <div class="type-row"><span style="font-family:var(--mono);font-size:13px;font-weight:600">15 · 16:00–18:00 · 30/06</span><span class="spec">IBM Plex Mono · 9.5–13px</span></div>
+        <h4>Regras de uso</h4>
+        <ul class="clean">
+          <li>Mono <b>somente</b> para números/tempo/metadados (horas na régua, dia no cabeçalho, deadlines, status).</li>
+          <li>Texto de bloco usa <code>text-overflow: ellipsis</code> em 1 linha; a hora aparece só quando o bloco tem altura &gt; 30px.</li>
+        </ul>
+      </section>
+
+      <!-- 2.2 CLASSES -->
+      <section id="classes">
+        <span class="sec-num">2.2</span>
+        <h2>Cores por classe</h2>
+        <p class="sub">A classe é o eixo da paleta. Cada uma tem <strong>fundo</strong> (bloco), <strong>traço</strong> (barra/borda) e <strong>texto</strong>. A coluna “rastreia” define o padrão de <em>Acompanhar conclusão</em> — só classes que rastreiam podem ficar pendentes. Classes são definíveis pelo usuário; estas são os padrões.</p>
+
+        <div class="class-row">
+          <span class="class-chip" style="background:var(--aula-bg);border-color:var(--aula-st);color:var(--aula-tx)">Aula</span>
+          <div class="class-meta"><div class="hexes">bg #e6f1fb · st #9cc4e8 · tx #185fa5</div><div class="desc">Compromisso fixo recorrente (aulas).</div></div>
+          <span class="track no">não rastreia</span>
+        </div>
+        <div class="class-row">
+          <span class="class-chip" style="background:var(--basica-bg);border-color:var(--basica-st);color:var(--basica-tx)">Tarefas básicas</span>
+          <div class="class-meta"><div class="hexes">bg #f0efe9 · st #d8d6cd · tx #6a695f</div><div class="desc">Estrutura o dia: acordar, refeições, deslocamento.</div></div>
+          <span class="track no">não rastreia</span>
+        </div>
+        <div class="class-row">
+          <span class="class-chip" style="background:var(--estudar-bg);border-color:var(--estudar-st);color:var(--estudar-tx)">Estudar</span>
+          <div class="class-meta"><div class="hexes">bg #ecf4df · st #b9d795 · tx #3b6d11</div><div class="desc">Blocos de estudo/trabalho que você decidiu fazer.</div></div>
+          <span class="track yes">✓ rastreia conclusão</span>
+        </div>
+        <div class="class-row">
+          <span class="class-chip" style="background:var(--prova-bg);border-color:var(--prova-st);color:var(--prova-tx)">Prova</span>
+          <div class="class-meta"><div class="hexes">bg #fbeaea · st #e0b0b0 · tx #a32d2d</div><div class="desc">Avaliações com horário fixo.</div></div>
+          <span class="track no">não rastreia</span>
+        </div>
+        <div class="class-row">
+          <span class="class-chip" style="background:var(--trabalho-bg);border-color:var(--trabalho-st);color:var(--trabalho-tx)">Trabalho</span>
+          <div class="class-meta"><div class="hexes">bg #e1f5ee · st #9fe1cb · tx #0f6e56</div><div class="desc">Projetos e entregas profissionais.</div></div>
+          <span class="track yes">✓ rastreia conclusão</span>
+        </div>
+        <div class="note"><p><b>Novas classes do usuário</b> recebem um swatch de uma paleta reservada (violetas/laranjas/rosas/teais/azuis-acinzentados) — nunca o violeta de marca. O <code>rastrear_conclusao</code> tem padrão por classe, com override por evento.</p></div>
+      </section>
+
+      <!-- 2.3 UI CORES -->
+      <section id="ui-cores">
+        <span class="sec-num">2.3</span>
+        <h2>UI, estados &amp; neutros</h2>
+
+        <h3>Marca / UI — violeta</h3>
+        <div class="swatch-grid">
+          <div class="sw"><div class="chip" style="background:#5b4f9e"><span class="dot" style="background:#fff"></span></div><div class="meta"><b>UI</b><span class="hex">#5b4f9e</span><span class="role">hoje, seleção, ações, linha do agora</span></div></div>
+          <div class="sw"><div class="chip" style="background:#453a80"></div><div class="meta"><b>UI strong</b><span class="hex">#453a80</span><span class="role">texto/ícone sobre tint</span></div></div>
+          <div class="sw"><div class="chip" style="background:#efedf8"><span class="dot" style="background:#5b4f9e"></span></div><div class="meta"><b>UI tint</b><span class="hex">#efedf8</span><span class="role">fundo de seleção, semana atual</span></div></div>
+          <div class="sw"><div class="chip" style="background:#cdc7e8"></div><div class="meta"><b>UI border</b><span class="hex">#cdc7e8</span><span class="role">bordas violeta sutis</span></div></div>
+        </div>
+
+        <h3>Estados</h3>
+        <div class="swatch-grid">
+          <div class="sw"><div class="chip" style="background:#faf2db"><span class="dot" style="background:#ba7517"></span></div><div class="meta"><b>Pendente · âmbar</b><span class="hex">#ba7517 / bg #faf2db / tx #8a661c</span><span class="role">borda tracejada + ⚠ + indicador</span></div></div>
+          <div class="sw"><div class="chip" style="background:#ecf4df"><span class="dot" style="background:#3b6d11"></span></div><div class="meta"><b>Concluído · verde</b><span class="hex">#3b6d11 / bg #ecf4df / st #bcd99a</span><span class="role">ação Concluir; bloco esmaece + ✓</span></div></div>
+          <div class="sw"><div class="chip" style="background:#fbeaea"><span class="dot" style="background:#a32d2d"></span></div><div class="meta"><b>Crítico · vermelho</b><span class="hex">#a32d2d</span><span class="role">excluir, feriado, classe Prova</span></div></div>
+        </div>
+
+        <h3>Neutros &amp; superfícies</h3>
+        <div class="swatch-grid">
+          <div class="sw"><div class="chip" style="background:#1d1d22"></div><div class="meta"><b>Ink</b><span class="hex">#1d1d22</span><span class="role">texto primário</span></div></div>
+          <div class="sw"><div class="chip" style="background:#56565f"></div><div class="meta"><b>Slate</b><span class="hex">#56565f</span><span class="role">texto secundário</span></div></div>
+          <div class="sw"><div class="chip" style="background:#9a9aa2"></div><div class="meta"><b>Muted</b><span class="hex">#9a9aa2</span><span class="role">metadados, placeholders</span></div></div>
+          <div class="sw"><div class="chip" style="background:#ffffff;border-bottom:1px solid #eee"></div><div class="meta"><b>Paper</b><span class="hex">#ffffff</span><span class="role">calendário, painel, cards</span></div></div>
+          <div class="sw"><div class="chip" style="background:#f6f6f8"></div><div class="meta"><b>Page</b><span class="hex">#f6f6f8</span><span class="role">fundo da app</span></div></div>
+          <div class="sw"><div class="chip" style="background:#eeeef1"></div><div class="meta"><b>Sidebar</b><span class="hex">#eeeef1</span><span class="role">barra lateral</span></div></div>
+        </div>
+        <h4>Linhas</h4>
+        <p class="sub" style="font-family:var(--mono);font-size:12.5px">hairline <code>#e6e6ea</code> · hairline-strong <code>#dcdce2</code> · grid-line <code>#edeef1</code> (linhas horárias e colunas)</p>
+      </section>
+
+      <!-- 2.4 ESPAÇAMENTO -->
+      <section id="espacamento">
+        <span class="sec-num">2.4</span>
+        <h2>Grade, espaço &amp; sombras</h2>
+        <p class="sub">A grade do calendário é fixa e compacta: cabe do acordar ao dormir sem rolagem na maioria das telas.</p>
+        <table>
+          <thead><tr><th>Token</th><th>Valor</th><th>Onde</th></tr></thead>
+          <tbody>
+            <tr><td>Barra superior</td><td class="val">52px</td><td>altura do topbar</td></tr>
+            <tr><td>Sidebar</td><td class="val">232px</td><td>mini-calendário + Inbox</td></tr>
+            <tr><td>Painel lateral</td><td class="val">380px</td><td>evento / pendentes</td></tr>
+            <tr><td>Cabeçalho de dias</td><td class="val">46px</td><td>topo da grade</td></tr>
+            <tr><td>Régua de horas</td><td class="val">50px</td><td>gutter à esquerda</td></tr>
+            <tr><td>Altura da hora</td><td class="val">38px</td><td>1h = 38px (proporcional)</td></tr>
+            <tr><td>Faixa horária</td><td class="val">06:00 – 23:30</td><td>linhas da grade</td></tr>
+            <tr><td>Snap de arrasto</td><td class="val">15min (0.25h)</td><td>ao soltar no horário</td></tr>
+          </tbody>
+        </table>
+        <h4>Raios</h4>
+        <p class="sub" style="font-family:var(--mono);font-size:12.5px">bloco de evento <code>11px</code> · card <code>12px</code> · botão <code>9px</code> · pílula/segment <code>6–8px</code></p>
+        <h4>Sombras</h4>
+        <p class="sub" style="font-family:var(--mono);font-size:12px">evento <code>0 1px 2px rgba(20,18,40,.07)</code> · card <code>0 1px 2px rgba(20,18,40,.05)</code> · painel <code>-8px 0 24px rgba(20,18,40,.10)</code> · selecionado <code>0 2px 8px rgba(20,18,40,.14)</code></p>
+        <div class="note"><p><b>Bloco pronto para colar (CSS custom properties):</b> o arquivo <code>handoff.css</code> deste documento abre com um <code>:root</code> contendo todos esses tokens nomeados — reaproveite-o no projeto de produção.</p></div>
+      </section>
+
+      <!-- 03 COMPONENTES -->
+      <section id="componentes">
+        <span class="sec-num">03</span>
+        <h2>Componentes</h2>
+
+        <h3>Bloco de evento</h3>
+        <div class="spec">
+          <div class="demo">
+            <div class="ev estudar">Estudar P1 Cálculo<div class="t">13:00–15:00</div></div>
+            <div class="ev pend">⚠ Estudar Cálculo<div class="t">09:30–11:00</div></div>
+            <div class="ev done">✓ Estudar P1 Cálculo<div class="t">13:00–15:00</div></div>
+          </div>
+          <div class="meta"><div class="name">EventBlock</div><div class="props">
+            raio <span>11px</span> · padding <span>4px 9px</span> (≤30px alto: <span>2px 9px</span>) · título <span>Hanken 11.5/600</span> · hora <span>Mono 9.5</span> · sombra <span>--sh-event</span><br>
+            <b>Estados —</b> agendado: fundo+texto da classe · <b>pendente:</b> <span>borda 1.5px dashed âmbar</span> + ⚠, sem sombra · <b>concluído:</b> <span>opacity .55</span> + ✓ + line-through · <b>selecionado:</b> <span>borda 1.5px cor-da-classe</span> + sombra realçada
+          </div></div>
+        </div>
+
+        <h3>Card do Inbox</h3>
+        <div class="spec">
+          <div class="demo">
+            <div class="inboxcard"><span class="acc" style="background:var(--estudar-st)"></span><span class="h"><i></i><i></i><i></i><i></i><i></i><i></i></span><div><div class="ttl">Estudar P1 Cálculo</div><div class="m">deadline 30/06 · 3h</div></div></div>
+            <div class="inboxcard"><span class="acc" style="background:var(--trabalho-st)"></span><span class="h"><i></i><i></i><i></i><i></i><i></i><i></i></span><div><div class="ttl">Relatório Física</div><div class="m">sem deadline · 2h</div></div></div>
+          </div>
+          <div class="meta"><div class="name">InboxCard <span style="font-weight:400;color:var(--muted);font-family:var(--mono);font-size:11px">— draggable</span></div><div class="props">
+            raio <span>12px</span> · barra de acento esquerda <span>4px = traço da classe</span> · alça de pontos (drag handle) · título <span>12.5/600</span> · meta <span>Mono 10</span> · sombra <span>--sh-card</span><br>
+            <b>cursor:</b> grab · arrasto inicia o fluxo de agendamento (ver §05)
+          </div></div>
+        </div>
+
+        <h3>Indicador de Pendentes · Segmented · Ações</h3>
+        <div class="spec">
+          <div class="demo" style="align-items:center">
+            <span class="pill">⚠ Pendentes · 1</span>
+            <span class="seg"><span>Dia</span><span class="on">Semana</span><span>Mês</span></span>
+            <span class="btn done">✓ Concluir</span>
+            <span class="btn ghost">↻ Remarcar</span>
+            <span class="btn ui">Salvar</span>
+          </div>
+          <div class="meta"><div class="name">Topbar — controles</div><div class="props">
+            <b>Pendentes:</b> pílula âmbar, aparece só com N&gt;0; abre o painel de pendentes · <b>Segmented:</b> trilho <span>#ececf0</span>, ativo branco c/ sombra · <b>Concluir:</b> verde · <b>Remarcar:</b> ghost · <b>Salvar:</b> violeta sólido
+          </div></div>
+        </div>
+
+        <h4>Outros elementos</h4>
+        <ul class="clean">
+          <li><b>Linha do agora</b> — régua horizontal violeta <code>2px</code> + ponto <code>8px</code>, só na coluna de hoje.</li>
+          <li><b>Mini-calendário</b> — dias em Mono; hoje preenchido de violeta; semana atual em tint; feriado em vermelho. Some na view Mês.</li>
+          <li><b>Painel lateral</b> — 380px, entra deslizando da direita sobre um scrim <code>rgba(20,18,40,.10)</code>; barra de cor da classe no topo; fecha em ✕, scrim ou Esc.</li>
+          <li><b>Cabeçalho de dia</b> — “Seg 15”; hoje com número em pílula violeta; feriado com etiqueta <code>FERIADO</code> vermelha.</li>
+        </ul>
+      </section>
+
+      <!-- 04 TELAS -->
+      <section id="telas">
+        <span class="sec-num">04</span>
+        <h2>Telas anotadas</h2>
+
+        <h3>Semana — planejamento</h3>
+        <div class="figure"><img src="screenshots/01-screen.png" alt="Tela Semana"></div>
+        <div class="anno">
+          <div class="a"><span class="pin">1</span><div><b>Sidebar fixa</b> — mini-calendário + Inbox, presentes em Dia e Semana.</div></div>
+          <div class="a"><span class="pin">2</span><div><b>Grade 06h→23h30</b> — 7 colunas, cor de cada bloco vinda da classe.</div></div>
+          <div class="a"><span class="pin">3</span><div><b>Hoje</b> destacado (coluna branca, número violeta) com a linha do agora.</div></div>
+          <div class="a"><span class="pin">4</span><div><b>Bloco pendente</b> (Estudar, 13–15) com borda tracejada âmbar + ⚠.</div></div>
+          <div class="a"><span class="pin">5</span><div><b>Sexta = feriado</b>: marcador de dia (etiqueta), não um bloco — não colide com a classe Prova.</div></div>
+        </div>
+
+        <h3>Dia — execução</h3>
+        <div class="figure"><img src="screenshots/02-screen.png" alt="Tela Dia"></div>
+        <div class="anno">
+          <div class="a"><span class="pin">1</span><div><b>Coluna única</b> larga (máx. ~760px) — foco no “o que faço agora”.</div></div>
+          <div class="a"><span class="pin">2</span><div><b>Altura proporcional</b> à duração; classes ficam bem evidentes.</div></div>
+          <div class="a"><span class="pin">3</span><div><b>Inbox permanece</b> — arrasto também funciona aqui.</div></div>
+        </div>
+
+        <h3>Mês — panorama</h3>
+        <div class="figure"><img src="screenshots/03-screen.png" alt="Tela Mês"></div>
+        <div class="anno">
+          <div class="a"><span class="pin">1</span><div><b>Densidade por tom neutro</b> — quanto mais cheio o dia, mais forte o cinza (sinal neutro, não classe).</div></div>
+          <div class="a"><span class="pin">2</span><div><b>Chips só para âncoras</b> — deadlines (âmbar ◆) e feriados (vermelho). Rotina não é listada.</div></div>
+          <div class="a"><span class="pin">3</span><div><b>Mini-calendário some</b> (redundante); Inbox continua. Clique num dia → abre o Dia.</div></div>
+        </div>
+
+        <h3>Painel do Evento</h3>
+        <div class="figure"><img src="screenshots/04-screen.png" alt="Painel do Evento"></div>
+        <div class="anno">
+          <div class="a"><span class="pin">1</span><div><b>Seletor de classe</b> — define a cor e pré-marca “Acompanhar conclusão” pelo padrão da classe.</div></div>
+          <div class="a"><span class="pin">2</span><div><b>Início/Fim/Detalhes</b> e <b>Repetir na rotina</b> (dias + ignorar feriados).</div></div>
+          <div class="a"><span class="pin">3</span><div><b>Conclusão</b> — só se rastreável: Status + <b>Concluir</b>/<b>Remarcar</b>.</div></div>
+          <div class="a"><span class="pin">4</span><div><b>Rodapé</b> — Excluir (vermelho) e Salvar (violeta). Calendário continua visível atrás.</div></div>
+        </div>
+
+        <h3>Pendentes</h3>
+        <div class="figure"><img src="screenshots/05-screen.png" alt="Painel de Pendentes"></div>
+        <div class="anno">
+          <div class="a"><span class="pin">1</span><div><b>Lista de itens</b> que passaram do horário sem ação, com data/hora em âmbar.</div></div>
+          <div class="a"><span class="pin">2</span><div><b>Concluir</b> encerra; <b>Remarcar</b> devolve ao Inbox (volta ao ritual). Vazio mostra estado “tudo resolvido”.</div></div>
+        </div>
+      </section>
+
+      <!-- 05 COMPORTAMENTOS -->
+      <section id="comportamentos">
+        <span class="sec-num">05</span>
+        <h2>Comportamentos &amp; interações</h2>
+
+        <h3>Arrasto: Inbox → horário</h3>
+        <ul class="clean">
+          <li><b>Início</b> — card do Inbox é <code>draggable</code>; ao iniciar, guarda o item arrastado.</li>
+          <li><b>Sobre a grade</b> — calcula a hora a partir do Y do cursor e faz <b>snap em 15min</b>; mostra um <em>fantasma</em> (bloco tracejado com o horário) na coluna sob o cursor.</li>
+          <li><b>Soltar</b> — cria um Evento: início = hora do drop, duração = esforço do item (padrão 1h), <b>herda a classe</b> e o padrão de rastreamento; remove do Inbox e <b>abre o painel</b> do novo evento.</li>
+        </ul>
+
+        <h3>Navegação de views</h3>
+        <ul class="clean">
+          <li><b>Dia/Semana/Mês</b> no segmented; setas e “Hoje” na barra; mini-calendário navega a semana/dia.</li>
+          <li>A direção do passo (◀ ▶) depende da view: ±1 dia, ±7 dias ou ±1 mês.</li>
+        </ul>
+
+        <h3>Conclusão &amp; pendência</h3>
+        <ul class="clean">
+          <li><b>Pendente é derivado</b>, não um clique: quando <code>agora &gt; fim</code> e o evento rastreia e ainda está agendado.</li>
+          <li><b>Concluir</b> → <code>CONCLUIDO</code> (bloco esmaece). <b>Remarcar</b> → remove o evento e devolve a tarefa ao Inbox.</li>
+          <li>Esc / scrim / ✕ fecham qualquer painel.</li>
+        </ul>
+        <div class="note"><p><b>Persistência:</b> todo o estado (eventos, inbox, view, cursor) é salvo em <code>localStorage</code> sob a chave <code>planejador:v2</code> — em produção, troque por API/banco mantendo o mesmo formato.</p></div>
+      </section>
+
+      <!-- 06 DADOS -->
+      <section id="dados">
+        <span class="sec-num">06</span>
+        <h2>Modelo de dados &amp; máquina de estados</h2>
+        <p class="sub">Resumo operacional (o detalhamento completo está na Especificação v1.1). Duas entidades centrais — <strong>Tarefa</strong> (Inbox) e <strong>Evento</strong> (calendário) — orbitando a <strong>Classe</strong>.</p>
+
+        <h4>Entidades-chave</h4>
+        <table>
+          <thead><tr><th>Entidade</th><th>Campos essenciais</th></tr></thead>
+          <tbody>
+            <tr><td><b>Classe</b></td><td class="val">id · nome · cor · rastreia_conclusao</td></tr>
+            <tr><td><b>Tarefa</b> (Inbox)</td><td class="val">id · titulo · classe? · deadline? · esforco_estimado? · status(INBOX|PROMOVIDA)</td></tr>
+            <tr><td><b>Evento</b></td><td class="val">id · titulo · inicio · fim · classe · rastrear_conclusao · status? · origem_tarefa? · regra_recorrencia?</td></tr>
+            <tr><td><b>Recorrência</b></td><td class="val">tipo(SEMANAL|MENSAL) · dias[] · ignorar_feriados · data_fim?</td></tr>
+            <tr><td><b>Ocorrência</b></td><td class="val">data · override de status/horário (não afeta a série)</td></tr>
+          </tbody>
+        </table>
+
+        <h4>Máquina de estados — só eventos com <code>rastrear_conclusao = true</code></h4>
+        <div class="fsm">
+          <span class="state ag">AGENDADO</span>
+          <span class="arrow">→<b>agora &gt; fim</b></span>
+          <span class="state pe">PENDENTE</span>
+          <span class="arrow">→<b>concluir</b></span>
+          <span class="state co">CONCLUÍDO</span>
+        </div>
+        <div class="fsm">
+          <span class="state pe">PENDENTE</span>
+          <span class="arrow">→<b>remarcar</b></span>
+          <span class="state re">REMARCADO</span>
+          <span class="arrow">→<b>volta ao</b></span>
+          <span class="state ag" style="color:var(--ui-strong);background:var(--ui-tint);border-color:var(--ui-border)">INBOX</span>
+        </div>
+        <p class="sub">Eventos de classes que não rastreiam (Aula, Tarefas básicas, Prova) <strong>não têm status</strong> — apenas ocupam o horário. <strong>Remarcar sempre devolve ao Inbox</strong>, preservando o fluxo único Inbox → calendário.</p>
+      </section>
+
+      <!-- 07 ROADMAP -->
+      <section id="roadmap">
+        <span class="sec-num">07</span>
+        <h2>Roadmap — Fase 2</h2>
+        <div class="phase now">
+          <div class="tagrow"><span class="ph">Fase 1 · MVP (este handoff)</span></div>
+          <h3>Calendário + Inbox + ritual de agendamento</h3>
+          <p class="sub" style="margin:6px 0 0">Views Dia/Semana/Mês, arrasto do Inbox, classes &amp; cores, painel do evento, conclusão/pendência/remarcação, recorrência básica.</p>
+        </div>
+        <div class="phase next">
+          <div class="tagrow"><span class="ph">Fase 2 · próximo</span></div>
+          <h3>Motor de priorização &amp; sugestões</h3>
+          <ul class="clean" style="margin:8px 0 0">
+            <li><b>Prioridade derivada</b> a partir de <code>deadline</code> + <code>esforco_estimado</code> das tarefas do Inbox.</li>
+            <li><b>Painel de sugestões</b> — recomenda quando encaixar cada pendência (assistência <em>consultiva, nunca bloqueante</em>: o usuário decide).</li>
+            <li>Encaixe inteligente em lacunas livres da semana, respeitando rotina e feriados.</li>
+          </ul>
+        </div>
+        <div class="phase next">
+          <div class="tagrow"><span class="ph">Depois</span></div>
+          <h3>Gestão de classes &amp; mobile</h3>
+          <p class="sub" style="margin:6px 0 0">Criar/renomear/recolorir classes pelo “+”, criar evento ao clicar em horário vazio, e a versão mobile (a arquitetura web-first já preserva essa migração).</p>
+        </div>
+      </section>
+
+      <footer>
+        Planejador de Rotina · Handoff de Design do MVP (Fase 1) · estilo derivado do protótipo aprovado (Direção C + classes v1.1).
+        Fonte da verdade funcional: <code>Planejador.html</code> e seus módulos <code>core/views/panels/app.jsx</code>.
+      </footer>
+
+    </div>
+  </main>
+</div>
+</body>
+</html>
