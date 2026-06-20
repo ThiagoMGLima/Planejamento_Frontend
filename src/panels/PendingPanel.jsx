@@ -26,13 +26,25 @@ export default function PendingPanel() {
                 <span className="pending__acc" style={{ background: classe?.cor?.st }} />
                 <div className="pending__body">
                   <div className="pending__title">{inst.titulo}</div>
-                  <div className="pending__when mono">{formatWhen(inst.inicio, inst.fim, store.now)}</div>
+                  <div className="pending__when mono">
+                    {formatWhen(inst.inicio, inst.fim, store.now)}
+                  </div>
                 </div>
                 <div className="pending__actions">
-                  <button className="btn btn--done btn--sm" type="button" title="Concluir" onClick={() => store.concluir(inst)}>
+                  <button
+                    className="btn btn--done btn--sm"
+                    type="button"
+                    title="Concluir"
+                    onClick={() => store.concluir(inst)}
+                  >
                     ✓
                   </button>
-                  <button className="btn btn--ghost btn--sm" type="button" title="Remarcar (volta ao Inbox)" onClick={() => store.remarcar(inst)}>
+                  <button
+                    className="btn btn--ghost btn--sm"
+                    type="button"
+                    title="Remarcar (volta ao Inbox)"
+                    onClick={() => store.remarcar(inst)}
+                  >
                     ↻
                   </button>
                 </div>
@@ -48,6 +60,8 @@ export default function PendingPanel() {
 function formatWhen(inicio, fim, now) {
   const d = new Date(inicio)
   const hoje = sameDay(d, now)
-  const data = hoje ? 'hoje' : `${WEEKDAYS_SHORT[d.getDay()]} ${d.getDate()} ${MONTHS_SHORT[d.getMonth()]}`
+  const data = hoje
+    ? 'hoje'
+    : `${WEEKDAYS_SHORT[d.getDay()]} ${d.getDate()} ${MONTHS_SHORT[d.getMonth()]}`
   return `${data} · ${formatTime(inicio)}–${formatTime(fim)}`
 }

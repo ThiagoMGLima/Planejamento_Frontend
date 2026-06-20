@@ -23,7 +23,8 @@ export default function Topbar() {
 
   const sel = store.selectedInstance
   const selStatus = sel ? statusEfetivo(sel, store.now) : undefined
-  const selRastreavel = sel?.rastrear_conclusao && selStatus !== 'CONCLUIDO' && selStatus !== 'REMARCADO'
+  const selRastreavel =
+    sel?.rastrear_conclusao && selStatus !== 'CONCLUIDO' && selStatus !== 'REMARCADO'
 
   return (
     <header className="topbar">
@@ -33,13 +34,23 @@ export default function Topbar() {
       </div>
 
       <div className="topbar__nav">
-        <button className="iconbtn" type="button" aria-label="Anterior" onClick={() => store.step(-1)}>
+        <button
+          className="iconbtn"
+          type="button"
+          aria-label="Anterior"
+          onClick={() => store.step(-1)}
+        >
           ◀
         </button>
         <button className="btn btn--ghost" type="button" onClick={store.goToday}>
           Hoje
         </button>
-        <button className="iconbtn" type="button" aria-label="Próximo" onClick={() => store.step(1)}>
+        <button
+          className="iconbtn"
+          type="button"
+          aria-label="Próximo"
+          onClick={() => store.step(1)}
+        >
           ▶
         </button>
         <span className="topbar__range mono">{rangeLabel(cursor, store.view)}</span>

@@ -18,9 +18,24 @@ horário. Execução **100% local** via Vite.
 
 ```bash
 npm install
-npm run dev      # sobe em http://localhost:5173
-npm run build    # build de produção
+npm run dev          # sobe em http://localhost:5173
+npm run build        # build de produção
+npm run test         # testes em watch (Vitest)
+npm run test:run     # testes uma vez (CI)
+npm run lint         # ESLint
+npm run format       # Prettier (escreve)
 ```
+
+## Configuração (.env)
+
+A integração com o backend (Marco 4) lê `VITE_API_URL`. Copie o exemplo:
+
+```bash
+cp .env.example .env   # VITE_API_URL=http://localhost:8000/api/v1
+```
+
+Nos Marcos 1–3 a variável é ignorada — o app roda 100% sobre `localStorage`
+(chave `planejador:v2`).
 
 ## Estado do projeto — Marcos
 
@@ -33,14 +48,19 @@ npm run build    # build de produção
   CRUD; componentes (`EventBlock`, `InboxCard`, `MiniCalendar`, `NowLine`,
   `SidePanel`, `Topbar`); views **Dia/Semana/Mês**; painéis do **Evento** e de
   **Pendentes**; navegação de views.
-- **Marco 3 (este PR) — Comportamentos e interações.** Arrasto Inbox→horário
-  com **snap de 15min** e fantasma; **pendência derivada** (`status_efetivo`
-  calculado no cliente por um relógio, nunca persistido); Concluir/Remarcar
-  (Remarcar devolve ao Inbox); **recorrência** (editor "Repetir na rotina" +
-  expansão local das ocorrências na janela); **feriados** como etiqueta
-  vermelha (cabeçalho/mini-calendário/Mês), nunca bloco. Esc/scrim/✕ fecham
-  qualquer painel.
-- **Marco 4** — integração com a API local (`VITE_API_URL`), testes e build.
+- **Marco 3 — Comportamentos e interações.** Arrasto Inbox→horário com **snap
+  de 15min** e fantasma; **pendência derivada** (`status_efetivo` no cliente,
+  nunca persistido); Concluir/Remarcar (Remarcar devolve ao Inbox);
+  **recorrência** (editor + expansão local); **feriados** como etiqueta, nunca
+  bloco.
+- **Marco 4 — em andamento.**
+  - **Parte 1 (este PR):** infra de testes (**Vitest + React Testing Library**)
+    e suíte cobrindo `status_efetivo`, snap/grade, expansão de recorrência,
+    `EventBlock` e o store; **ESLint + Prettier**; e o **esqueleto do cliente
+    HTTP** (`src/lib/api.js`) com os endpoints do PLAN (sem auth).
+  - **Parte 2 (a seguir):** trocar a implementação do `store` por `src/lib/api.js`
+    quando o contrato do backend (OpenAPI) for confirmado — a interface do store
+    não muda, então views/componentes ficam intactos.
 
 ## Backend
 

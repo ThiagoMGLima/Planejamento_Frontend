@@ -30,7 +30,12 @@ export default function InboxCard({ tarefa, classe, onClick }) {
     >
       <span className="inboxcard__acc" style={{ background: acento }} />
       <span className="inboxcard__handle" aria-hidden="true">
-        <i /><i /><i /><i /><i /><i />
+        <i />
+        <i />
+        <i />
+        <i />
+        <i />
+        <i />
       </span>
       <div className="inboxcard__body">
         <div className="inboxcard__title">{tarefa.titulo}</div>

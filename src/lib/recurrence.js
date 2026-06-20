@@ -55,7 +55,8 @@ export function expandInstances(eventos, { feriados = new Set(), start, end }) {
       const fim = atDay(day, evento.fim)
       const dateISO = toDateISO(day)
       const override = evento.ocorrencias?.[dateISO]
-      const status = override?.status ?? evento.status ?? (evento.rastrear_conclusao ? 'AGENDADO' : undefined)
+      const status =
+        override?.status ?? evento.status ?? (evento.rastrear_conclusao ? 'AGENDADO' : undefined)
       // Ocorrências REMARCADO foram devolvidas ao Inbox; não as mostramos na grade.
       if (status === 'REMARCADO') continue
       out.push(instanceFrom(evento, dateISO, inicio, fim, status))
