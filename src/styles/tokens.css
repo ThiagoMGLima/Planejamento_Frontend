@@ -1,0 +1,84 @@
+/* =============================================================================
+   Design tokens — Planejador de Rotina (MVP)
+   Fonte da verdade: "Handoff de Design - MVP.html" §2.1–2.4.
+   Todas as custom properties nomeadas vivem aqui. Não use hex solto nos componentes.
+
+   Três regras invioláveis (handoff §2):
+   1. Cor = classe. A cor de um evento vem sempre da sua classe.
+   2. Estado = tratamento, não matiz (borda/opacidade/ícone), mantendo a cor da classe.
+   3. Violeta é só da UI (hoje, seleção, linha do agora, ações primárias). Nenhuma classe é violeta.
+   ========================================================================== */
+
+:root {
+  /* ---- Tipografia (§2.1) ---------------------------------------------- */
+  --font-ui: 'Hanken Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+  /* alias mantendo o nome usado no handoff */
+  --mono: var(--font-mono);
+
+  /* Escala tipográfica (Hanken, salvo onde indicado mono) */
+  --fs-section: 27px;     /* título de seção / painel · 600 · -0.02em */
+  --fs-title: 16px;       /* título de evento & cabeçalhos · 600 */
+  --fs-nav: 14.5px;       /* rótulo de data · navegação · 600 */
+  --fs-body: 13px;        /* corpo, descrições, listas · 400 (13–15px) */
+  --fs-block: 11.5px;     /* título dentro do bloco de evento · 600 */
+  --fs-meta: 10px;        /* metadados (mono) */
+  --fs-time: 9.5px;       /* hora no bloco (mono) */
+
+  /* ---- Cores por classe (§2.2) — bg (fundo) · st (traço) · tx (texto) -- */
+  --aula-bg: #e6f1fb;     --aula-st: #9cc4e8;     --aula-tx: #185fa5;
+  --basica-bg: #f0efe9;   --basica-st: #d8d6cd;   --basica-tx: #6a695f;
+  --estudar-bg: #ecf4df;  --estudar-st: #b9d795;  --estudar-tx: #3b6d11;
+  --prova-bg: #fbeaea;    --prova-st: #e0b0b0;    --prova-tx: #a32d2d;
+  --trabalho-bg: #e1f5ee; --trabalho-st: #9fe1cb; --trabalho-tx: #0f6e56;
+
+  /* ---- Marca / UI — violeta (§2.3) ------------------------------------ */
+  --ui: #5b4f9e;          /* hoje, seleção, ações, linha do agora */
+  --ui-strong: #453a80;   /* texto/ícone sobre tint */
+  --ui-tint: #efedf8;     /* fundo de seleção, semana atual */
+  --ui-border: #cdc7e8;   /* bordas violeta sutis */
+
+  /* ---- Estados (§2.3) ------------------------------------------------- */
+  --pend: #ba7517;        --pend-bg: #faf2db;     --pend-tx: #8a661c;  /* pendente · âmbar */
+  --done: #3b6d11;        --done-bg: #ecf4df;     --done-st: #bcd99a;  /* concluído · verde */
+  --crit: #a32d2d;        /* crítico · vermelho (excluir, feriado, classe Prova) */
+
+  /* ---- Neutros & superfícies (§2.3) ----------------------------------- */
+  --ink: #1d1d22;         /* texto primário */
+  --slate: #56565f;       /* texto secundário */
+  --muted: #9a9aa2;       /* metadados, placeholders */
+  --paper: #ffffff;       /* calendário, painel, cards */
+  --page: #f6f6f8;        /* fundo da app */
+  --sidebar: #eeeef1;     /* barra lateral */
+
+  /* ---- Linhas (§2.3) -------------------------------------------------- */
+  --hairline: #e6e6ea;
+  --hairline-strong: #dcdce2;
+  --grid-line: #edeef1;   /* linhas horárias e colunas */
+
+  /* ---- Grade, espaço (§2.4) ------------------------------------------- */
+  --topbar-h: 52px;       /* barra superior */
+  --sidebar-w: 232px;     /* mini-calendário + Inbox */
+  --panel-w: 380px;       /* painel lateral (evento / pendentes) */
+  --dayhead-h: 46px;      /* cabeçalho de dias */
+  --ruler-w: 50px;        /* régua de horas (gutter à esquerda) */
+  --hour-h: 38px;         /* 1h = 38px (proporcional) */
+  --day-start: 6;         /* faixa horária início — 06:00 */
+  --day-end: 23.5;        /* faixa horária fim — 23:30 */
+  --snap-min: 15;         /* snap de arrasto — 15min (0.25h) */
+
+  /* ---- Raios (§2.4) --------------------------------------------------- */
+  --r-event: 11px;        /* bloco de evento */
+  --r-card: 12px;         /* card */
+  --r-btn: 9px;           /* botão */
+  --r-pill: 7px;          /* pílula / segment (6–8px) */
+
+  /* ---- Sombras (§2.4) ------------------------------------------------- */
+  --sh-event: 0 1px 2px rgba(20, 18, 40, 0.07);
+  --sh-card: 0 1px 2px rgba(20, 18, 40, 0.05);
+  --sh-panel: -8px 0 24px rgba(20, 18, 40, 0.1);
+  --sh-selected: 0 2px 8px rgba(20, 18, 40, 0.14);
+
+  /* ---- Scrim do painel lateral (§3) ----------------------------------- */
+  --scrim: rgba(20, 18, 40, 0.1);
+}

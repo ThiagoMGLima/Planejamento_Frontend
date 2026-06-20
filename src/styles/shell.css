@@ -1,0 +1,341 @@
+/* =============================================================================
+   Shell de layout (Marco 1). Apenas estrutura visual; medidas e cores vêm de
+   tokens.css. Sem lógica de interação (Marcos 2–3).
+   ========================================================================== */
+
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--page);
+}
+
+.app__body {
+  position: relative;
+  flex: 1;
+  display: flex;
+  min-height: 0;
+}
+
+.app__main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+}
+
+/* ---- Topbar (52px) ---------------------------------------------------- */
+.topbar {
+  height: var(--topbar-h);
+  flex: 0 0 var(--topbar-h);
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 0 16px;
+  background: var(--paper);
+  border-bottom: 1px solid var(--hairline);
+}
+
+.topbar__brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--fs-title);
+  color: var(--ink);
+}
+
+.topbar__mark {
+  width: 16px;
+  height: 16px;
+  border-radius: 5px;
+  background: var(--ui); /* violeta = marca/UI */
+}
+
+.topbar__nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.topbar__actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+/* Segmented Dia/Semana/Mês */
+.seg {
+  display: inline-flex;
+  background: #ececf0;
+  border-radius: var(--r-pill);
+  padding: 2px;
+  font-size: var(--fs-nav);
+  font-weight: 600;
+  color: var(--slate);
+}
+
+.seg > span {
+  padding: 4px 12px;
+  border-radius: calc(var(--r-pill) - 2px);
+}
+
+.seg__on {
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: var(--sh-card);
+}
+
+/* Pílula de Pendentes — âmbar, só com N>0 */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: var(--r-pill);
+  background: var(--pend-bg);
+  color: var(--pend-tx);
+  border: 1px solid var(--pend);
+  font-size: var(--fs-nav);
+  font-weight: 600;
+}
+
+/* Botões */
+.btn {
+  border: 1px solid transparent;
+  border-radius: var(--r-btn);
+  padding: 6px 12px;
+  font-size: var(--fs-nav);
+  font-weight: 600;
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.btn--ghost {
+  background: transparent;
+  border-color: var(--hairline-strong);
+  color: var(--slate);
+}
+
+.btn--done {
+  background: var(--done-bg);
+  border-color: var(--done-st);
+  color: var(--done);
+}
+
+.btn--ui {
+  background: var(--ui);
+  color: #fff;
+}
+
+.btn:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.iconbtn {
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--hairline-strong);
+  border-radius: var(--r-btn);
+  background: var(--paper);
+  color: var(--slate);
+  font-size: 12px;
+  line-height: 1;
+}
+
+.iconbtn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* ---- Sidebar (232px) -------------------------------------------------- */
+.sidebar {
+  flex: 0 0 var(--sidebar-w);
+  width: var(--sidebar-w);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 16px 14px;
+  background: var(--sidebar);
+  border-right: 1px solid var(--hairline);
+  overflow-y: auto;
+}
+
+.sidebar__block--grow {
+  flex: 1;
+}
+
+.sidebar__title {
+  font-size: var(--fs-nav);
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 10px;
+}
+
+.sidebar__empty {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* Mini-calendário — grade 7×5 (placeholder) */
+.minical {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+
+.minical__cell {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  color: var(--slate);
+  border-radius: 5px;
+}
+
+/* Legenda de classes */
+.legend {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.legend__item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+}
+
+.legend__swatch {
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+  border: 1.5px solid;
+  flex: 0 0 auto;
+}
+
+.legend__name {
+  font-weight: 600;
+}
+
+.legend__track {
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--done);
+}
+
+/* ---- Área de calendário ---------------------------------------------- */
+.calendar {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: var(--paper);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-card);
+  overflow: hidden;
+}
+
+.calendar__head {
+  height: var(--dayhead-h);
+  flex: 0 0 var(--dayhead-h);
+  display: flex;
+  border-bottom: 1px solid var(--hairline-strong);
+}
+
+.calendar__corner {
+  flex: 0 0 var(--ruler-w);
+  width: var(--ruler-w);
+  border-right: 1px solid var(--grid-line);
+}
+
+.calendar__dayhead {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border-left: 1px solid var(--grid-line);
+}
+
+.calendar__dayname {
+  font-size: var(--fs-nav);
+  font-weight: 600;
+  color: var(--slate);
+}
+
+.calendar__daynum {
+  font-size: var(--fs-nav);
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.calendar__body {
+  flex: 1;
+  display: flex;
+  overflow-y: auto;
+}
+
+.calendar__ruler {
+  flex: 0 0 var(--ruler-w);
+  width: var(--ruler-w);
+  border-right: 1px solid var(--grid-line);
+}
+
+.calendar__hourlabel {
+  height: var(--hour-h);
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+  padding: 2px 6px 0 0;
+  font-size: var(--fs-time);
+  color: var(--muted);
+}
+
+.calendar__grid {
+  flex: 1;
+  display: flex;
+}
+
+.calendar__col {
+  flex: 1;
+  border-left: 1px solid var(--grid-line);
+}
+
+.calendar__slot {
+  height: var(--hour-h);
+  border-bottom: 1px solid var(--grid-line);
+}
+
+.calendar__hint {
+  flex: 0 0 auto;
+  padding: 6px 10px;
+  font-size: var(--fs-meta);
+  color: var(--muted);
+  text-align: right;
+}
+
+/* ---- Slot do painel lateral (380px) ----------------------------------- */
+.scrim {
+  position: absolute;
+  inset: 0;
+  background: var(--scrim);
+}
+
+.sidepanel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: var(--panel-w);
+  background: var(--paper);
+  box-shadow: var(--sh-panel);
+}
