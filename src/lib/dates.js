@@ -17,8 +17,18 @@ export const SNAP_HOURS = 0.25
 export const WEEKDAYS_SHORT = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb']
 /** Meses em pt-BR, abreviados (índice 0 = janeiro). @type {string[]} */
 export const MONTHS_SHORT = [
-  'jan', 'fev', 'mar', 'abr', 'mai', 'jun',
-  'jul', 'ago', 'set', 'out', 'nov', 'dez',
+  'jan',
+  'fev',
+  'mar',
+  'abr',
+  'mai',
+  'jun',
+  'jul',
+  'ago',
+  'set',
+  'out',
+  'nov',
+  'dez',
 ]
 
 /**
@@ -165,7 +175,12 @@ export function monthGrid(date) {
     weeks.push(row)
     cursor = addDays(cursor, 7)
     // para se a próxima semana já passou do mês
-    if (cursor.getMonth() !== d.getMonth() && w >= 3 && row.some((x) => x.getMonth() !== d.getMonth())) break
+    if (
+      cursor.getMonth() !== d.getMonth() &&
+      w >= 3 &&
+      row.some((x) => x.getMonth() !== d.getMonth())
+    )
+      break
   }
   return weeks
 }

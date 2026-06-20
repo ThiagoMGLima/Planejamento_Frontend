@@ -32,10 +32,15 @@ export default function WeekView() {
           const isToday = sameDay(day, today)
           const feriado = store.feriadoByDate(toDateISO(day))
           return (
-            <div key={day.toISOString()} className={`calendar__dayhead ${isToday ? 'is-today' : ''}`}>
+            <div
+              key={day.toISOString()}
+              className={`calendar__dayhead ${isToday ? 'is-today' : ''}`}
+            >
               <div className="calendar__dayhead-main">
                 <span className="calendar__dayname">{WEEKDAYS_SHORT[day.getDay()]}</span>
-                <span className={`calendar__daynum mono ${isToday ? 'calendar__daynum--today' : ''}`}>
+                <span
+                  className={`calendar__daynum mono ${isToday ? 'calendar__daynum--today' : ''}`}
+                >
                   {day.getDate()}
                 </span>
               </div>

@@ -41,7 +41,9 @@ export default function EventPanel({ eventId }) {
   }
 
   function toggleDia(d) {
-    set({ dias: form.dias.includes(d) ? form.dias.filter((x) => x !== d) : [...form.dias, d].sort() })
+    set({
+      dias: form.dias.includes(d) ? form.dias.filter((x) => x !== d) : [...form.dias, d].sort(),
+    })
   }
 
   function salvar() {
@@ -66,12 +68,20 @@ export default function EventPanel({ eventId }) {
     <SidePanel title="Evento" accent={classe?.cor?.st} onClose={store.closePanel}>
       <label className="field">
         <span className="field__label">Título</span>
-        <input className="field__input" value={form.titulo} onChange={(e) => set({ titulo: e.target.value })} />
+        <input
+          className="field__input"
+          value={form.titulo}
+          onChange={(e) => set({ titulo: e.target.value })}
+        />
       </label>
 
       <label className="field">
         <span className="field__label">Classe</span>
-        <select className="field__input" value={form.classe} onChange={(e) => onClasse(e.target.value)}>
+        <select
+          className="field__input"
+          value={form.classe}
+          onChange={(e) => onClasse(e.target.value)}
+        >
           {store.classes.map((c) => (
             <option key={c.id} value={c.id}>
               {c.nome}
@@ -126,7 +136,13 @@ export default function EventPanel({ eventId }) {
           <input
             type="checkbox"
             checked={form.repetir}
-            onChange={(e) => set({ repetir: e.target.checked, dias: e.target.checked && form.dias.length === 0 ? [form.inicio.getDay()] : form.dias })}
+            onChange={(e) =>
+              set({
+                repetir: e.target.checked,
+                dias:
+                  e.target.checked && form.dias.length === 0 ? [form.inicio.getDay()] : form.dias,
+              })
+            }
           />
           <span>Repetir na rotina</span>
         </label>
@@ -176,7 +192,11 @@ export default function EventPanel({ eventId }) {
             >
               ✓ Concluir
             </button>
-            <button className="btn btn--ghost" type="button" onClick={() => store.remarcar(instance)}>
+            <button
+              className="btn btn--ghost"
+              type="button"
+              onClick={() => store.remarcar(instance)}
+            >
               ↻ Remarcar
             </button>
           </div>
@@ -205,8 +225,15 @@ export default function EventPanel({ eventId }) {
 function fromEvento(evento, store) {
   if (!evento) {
     return {
-      titulo: '', classe: store.classes[0]?.id ?? '', inicio: new Date(), fim: new Date(),
-      detalhes: '', rastrear_conclusao: false, repetir: false, dias: [], ignorarFeriados: false,
+      titulo: '',
+      classe: store.classes[0]?.id ?? '',
+      inicio: new Date(),
+      fim: new Date(),
+      detalhes: '',
+      rastrear_conclusao: false,
+      repetir: false,
+      dias: [],
+      ignorarFeriados: false,
     }
   }
   const regra = evento.regra_recorrencia
@@ -244,5 +271,9 @@ function toLocalInput(date) {
 }
 
 function labelStatus(s) {
-  return { AGENDADO: 'Agendado', PENDENTE: 'Pendente', CONCLUIDO: 'Concluído', REMARCADO: 'Remarcado' }[s] ?? 'Agendado'
+  return (
+    { AGENDADO: 'Agendado', PENDENTE: 'Pendente', CONCLUIDO: 'Concluído', REMARCADO: 'Remarcado' }[
+      s
+    ] ?? 'Agendado'
+  )
 }

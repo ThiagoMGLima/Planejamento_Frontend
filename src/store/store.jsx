@@ -82,7 +82,9 @@ function reducer(state, action) {
     case 'UPDATE_EVENTO':
       return {
         ...state,
-        eventos: state.eventos.map((e) => (e.id === action.evento.id ? { ...e, ...action.evento } : e)),
+        eventos: state.eventos.map((e) =>
+          e.id === action.evento.id ? { ...e, ...action.evento } : e,
+        ),
       }
     case 'REMOVE_EVENTO':
       return { ...state, eventos: state.eventos.filter((e) => e.id !== action.id) }
@@ -93,7 +95,9 @@ function reducer(state, action) {
     case 'UPDATE_TAREFA':
       return {
         ...state,
-        tarefas: state.tarefas.map((t) => (t.id === action.tarefa.id ? { ...t, ...action.tarefa } : t)),
+        tarefas: state.tarefas.map((t) =>
+          t.id === action.tarefa.id ? { ...t, ...action.tarefa } : t,
+        ),
       }
     case 'REMOVE_TAREFA':
       return { ...state, tarefas: state.tarefas.filter((t) => t.id !== action.id) }
@@ -104,7 +108,9 @@ function reducer(state, action) {
     case 'UPDATE_CLASSE':
       return {
         ...state,
-        classes: state.classes.map((c) => (c.id === action.classe.id ? { ...c, ...action.classe } : c)),
+        classes: state.classes.map((c) =>
+          c.id === action.classe.id ? { ...c, ...action.classe } : c,
+        ),
       }
     case 'REMOVE_CLASSE':
       return { ...state, classes: state.classes.filter((c) => c.id !== action.id) }
@@ -139,7 +145,10 @@ function reducer(state, action) {
         if (e.id !== instance.eventoId) return e
         if (instance.recorrente) {
           const ocorrencias = { ...(e.ocorrencias ?? {}) }
-          ocorrencias[instance.occDateISO] = { ...(ocorrencias[instance.occDateISO] ?? {}), status: 'CONCLUIDO' }
+          ocorrencias[instance.occDateISO] = {
+            ...(ocorrencias[instance.occDateISO] ?? {}),
+            status: 'CONCLUIDO',
+          }
           return { ...e, ocorrencias }
         }
         return { ...e, status: 'CONCLUIDO' }
@@ -159,7 +168,10 @@ function reducer(state, action) {
         eventos = state.eventos.map((e) => {
           if (e.id !== base.id) return e
           const ocorrencias = { ...(e.ocorrencias ?? {}) }
-          ocorrencias[instance.occDateISO] = { ...(ocorrencias[instance.occDateISO] ?? {}), status: 'REMARCADO' }
+          ocorrencias[instance.occDateISO] = {
+            ...(ocorrencias[instance.occDateISO] ?? {}),
+            status: 'REMARCADO',
+          }
           return { ...e, ocorrencias }
         })
       } else {
@@ -188,11 +200,14 @@ export function StoreProvider({ children }) {
     } catch {
       /* sem persistência — segue em memória */
     }
+    // Persistimos só quando uma fatia do DOMÍNIO muda — não em seleção/painel.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.classes, state.tarefas, state.eventos, state.feriados, state.view, state.cursorISO])
 
   const store = useMemo(() => {
     const feriadosSet = new Set((state.feriados ?? []).map((f) => f.data))
-    const feriadoByDate = (dateISO) => (state.feriados ?? []).find((f) => f.data === dateISO) ?? null
+    const feriadoByDate = (dateISO) =>
+      (state.feriados ?? []).find((f) => f.data === dateISO) ?? null
 
     /** Instâncias (expandindo recorrência) numa janela [start, end] de dias. */
     const instancesInRange = (start, end) =>
@@ -259,7 +274,8 @@ export function StoreProvider({ children }) {
       eventoById: (id) => state.eventos.find((e) => e.id === id) ?? null,
       feriadoByDate,
       instancesInRange,
-      instancesOfDay: (day, start, end) => instancesOfDay(instancesInRange(start ?? day, end ?? day), day),
+      instancesOfDay: (day, start, end) =>
+        instancesOfDay(instancesInRange(start ?? day, end ?? day), day),
       pendingInstances,
     }
   }, [state, now])
@@ -267,6 +283,8 @@ export function StoreProvider({ children }) {
   return <StoreContext.Provider value={store}>{children}</StoreContext.Provider>
 }
 
+// Provider + hook moram juntos de propósito (módulo do store).
+// eslint-disable-next-line react-refresh/only-export-components
 export function useStore() {
   const ctx = useContext(StoreContext)
   if (!ctx) throw new Error('useStore deve ser usado dentro de <StoreProvider>')

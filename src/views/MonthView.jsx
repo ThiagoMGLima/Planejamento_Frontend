@@ -69,7 +69,11 @@ export default function MonthView() {
                   </span>
                 )}
                 {dls.map((t) => (
-                  <span key={t.id} className="chip chip--deadline mono" title={`deadline · ${t.titulo}`}>
+                  <span
+                    key={t.id}
+                    className="chip chip--deadline mono"
+                    title={`deadline · ${t.titulo}`}
+                  >
                     ◆ {t.titulo}
                   </span>
                 ))}

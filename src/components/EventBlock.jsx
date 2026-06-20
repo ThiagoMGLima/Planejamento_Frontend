@@ -11,7 +11,14 @@ import { statusEfetivo } from '../lib/status.js'
  *
  * @param {{ instance: any, classe: any, now?: Date, selected?: boolean, style?: object, onClick?: Function }} props
  */
-export default function EventBlock({ instance, classe, now = new Date(), selected = false, style, onClick }) {
+export default function EventBlock({
+  instance,
+  classe,
+  now = new Date(),
+  selected = false,
+  style,
+  onClick,
+}) {
   const status = statusEfetivo(instance, now)
   const pendente = status === 'PENDENTE'
   const concluido = status === 'CONCLUIDO'
