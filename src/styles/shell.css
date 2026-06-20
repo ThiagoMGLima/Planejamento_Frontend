@@ -1,6 +1,6 @@
 /* =============================================================================
-   Shell de layout (Marco 1). Apenas estrutura visual; medidas e cores vêm de
-   tokens.css. Sem lógica de interação (Marcos 2–3).
+   Shell + componentes (Marco 2). Medidas e cores vêm de tokens.css.
+   Regra: cor de evento = classe; estado = tratamento; violeta = só UI.
    ========================================================================== */
 
 .app {
@@ -25,13 +25,15 @@
   padding: 12px;
 }
 
-/* ---- Topbar (52px) ---------------------------------------------------- */
+/* ===========================================================================
+   Topbar (52px)
+   ========================================================================== */
 .topbar {
   height: var(--topbar-h);
   flex: 0 0 var(--topbar-h);
   display: flex;
   align-items: center;
-  gap: 18px;
+  gap: 16px;
   padding: 0 16px;
   background: var(--paper);
   border-bottom: 1px solid var(--hairline);
@@ -49,13 +51,20 @@
   width: 16px;
   height: 16px;
   border-radius: 5px;
-  background: var(--ui); /* violeta = marca/UI */
+  background: var(--ui);
 }
 
 .topbar__nav {
   display: flex;
   align-items: center;
   gap: 8px;
+}
+
+.topbar__range {
+  font-size: 12.5px;
+  color: var(--slate);
+  margin: 0 6px;
+  white-space: nowrap;
 }
 
 .topbar__actions {
@@ -76,18 +85,22 @@
   color: var(--slate);
 }
 
-.seg > span {
+.seg > button {
+  border: none;
+  background: transparent;
+  color: inherit;
+  font: inherit;
   padding: 4px 12px;
   border-radius: calc(var(--r-pill) - 2px);
 }
 
 .seg__on {
   background: var(--paper);
-  color: var(--ink);
+  color: var(--ink) !important;
   box-shadow: var(--sh-card);
 }
 
-/* Pílula de Pendentes — âmbar, só com N>0 */
+/* Pílula de Pendentes — âmbar */
 .pill {
   display: inline-flex;
   align-items: center;
@@ -129,8 +142,18 @@
   color: #fff;
 }
 
+.btn--danger {
+  background: transparent;
+  border-color: var(--crit);
+  color: var(--crit);
+}
+
+.btn--sm {
+  padding: 4px 8px;
+}
+
 .btn:disabled {
-  opacity: 0.55;
+  opacity: 0.5;
   cursor: default;
 }
 
@@ -145,19 +168,16 @@
   line-height: 1;
 }
 
-.iconbtn:disabled {
-  opacity: 0.5;
-  cursor: default;
-}
-
-/* ---- Sidebar (232px) -------------------------------------------------- */
+/* ===========================================================================
+   Sidebar (232px) — mini-calendário + Inbox
+   ========================================================================== */
 .sidebar {
   flex: 0 0 var(--sidebar-w);
   width: var(--sidebar-w);
   display: flex;
   flex-direction: column;
   gap: 18px;
-  padding: 16px 14px;
+  padding: 14px;
   background: var(--sidebar);
   border-right: 1px solid var(--hairline);
   overflow-y: auto;
@@ -165,6 +185,7 @@
 
 .sidebar__block--grow {
   flex: 1;
+  min-height: 0;
 }
 
 .sidebar__title {
@@ -180,11 +201,30 @@
   line-height: 1.5;
 }
 
-/* Mini-calendário — grade 7×5 (placeholder) */
-.minical {
+/* Mini-calendário */
+.minical__head {
+  margin-bottom: 6px;
+}
+
+.minical__month {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ink);
+  text-transform: capitalize;
+}
+
+.minical__dow,
+.minical__grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 2px;
+}
+
+.minical__dowcell {
+  text-align: center;
+  font-size: 9.5px;
+  color: var(--muted);
+  padding-bottom: 2px;
 }
 
 .minical__cell {
@@ -194,45 +234,87 @@
   justify-content: center;
   font-size: 11px;
   color: var(--slate);
-  border-radius: 5px;
+  border: none;
+  background: transparent;
+  border-radius: 6px;
 }
 
-/* Legenda de classes */
-.legend {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 7px;
+.minical__cell--out {
+  color: var(--muted);
+  opacity: 0.5;
 }
 
-.legend__item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 12.5px;
+.minical__cell--week {
+  background: var(--ui-tint);
 }
 
-.legend__swatch {
-  width: 14px;
-  height: 14px;
-  border-radius: 4px;
-  border: 1.5px solid;
-  flex: 0 0 auto;
-}
-
-.legend__name {
+.minical__cell--today {
+  background: var(--ui);
+  color: #fff;
   font-weight: 600;
 }
 
-.legend__track {
-  margin-left: auto;
-  font-size: 11px;
-  color: var(--done);
+/* Inbox */
+.inbox {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
-/* ---- Área de calendário ---------------------------------------------- */
+.inboxcard {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px 8px 14px;
+  background: var(--paper);
+  border-radius: var(--r-card);
+  box-shadow: var(--sh-card);
+  cursor: grab;
+  overflow: hidden;
+}
+
+.inboxcard:active {
+  cursor: grabbing;
+}
+
+.inboxcard__acc {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+}
+
+.inboxcard__handle {
+  display: grid;
+  grid-template-columns: repeat(2, 3px);
+  gap: 2px;
+  flex: 0 0 auto;
+}
+
+.inboxcard__handle i {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--muted);
+}
+
+.inboxcard__title {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.inboxcard__meta {
+  font-size: 10px;
+  color: var(--muted);
+  margin-top: 1px;
+}
+
+/* ===========================================================================
+   Calendário (Week / Day)
+   ========================================================================== */
 .calendar {
   flex: 1;
   display: flex;
@@ -266,6 +348,10 @@
   border-left: 1px solid var(--grid-line);
 }
 
+.calendar__dayhead.is-today {
+  background: var(--ui-tint);
+}
+
 .calendar__dayname {
   font-size: var(--fs-nav);
   font-weight: 600;
@@ -276,6 +362,13 @@
   font-size: var(--fs-nav);
   font-weight: 600;
   color: var(--ink);
+}
+
+.calendar__daynum--today {
+  background: var(--ui);
+  color: #fff;
+  border-radius: 999px;
+  padding: 1px 7px;
 }
 
 .calendar__body {
@@ -306,8 +399,13 @@
 }
 
 .calendar__col {
+  position: relative;
   flex: 1;
   border-left: 1px solid var(--grid-line);
+}
+
+.calendar__col.is-today {
+  background: rgba(91, 79, 158, 0.03);
 }
 
 .calendar__slot {
@@ -315,19 +413,178 @@
   border-bottom: 1px solid var(--grid-line);
 }
 
-.calendar__hint {
-  flex: 0 0 auto;
-  padding: 6px 10px;
-  font-size: var(--fs-meta);
-  color: var(--muted);
-  text-align: right;
+/* Dia — coluna única larga (~760px) */
+.calendar--day .calendar__dayhead,
+.calendar--day .calendar__col {
+  max-width: 760px;
 }
 
-/* ---- Slot do painel lateral (380px) ----------------------------------- */
+/* ---- Bloco de evento --------------------------------------------------- */
+.event {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 1px;
+  padding: 4px 9px;
+  border: 1.5px solid transparent;
+  border-radius: var(--r-event);
+  box-shadow: var(--sh-event);
+  text-align: left;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.event__title {
+  font-size: var(--fs-block);
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.event__time {
+  font-size: var(--fs-time);
+  opacity: 0.85;
+}
+
+.event--pend {
+  border-style: dashed;
+  box-shadow: none;
+}
+
+.event--done {
+  opacity: 0.55;
+}
+
+.event--done .event__title {
+  text-decoration: line-through;
+}
+
+.event--selected {
+  box-shadow: var(--sh-selected);
+}
+
+/* Linha do agora — violeta, só na coluna de hoje */
+.nowline {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 0;
+  border-top: 2px solid var(--ui);
+  z-index: 3;
+}
+
+.nowline__dot {
+  position: absolute;
+  left: -4px;
+  top: -5px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--ui);
+}
+
+/* ===========================================================================
+   Mês — densidade por tom neutro + chips de âncora
+   ========================================================================== */
+.month {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: var(--paper);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-card);
+  overflow: hidden;
+}
+
+.month__dow {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  border-bottom: 1px solid var(--hairline-strong);
+}
+
+.month__dowcell {
+  padding: 8px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--slate);
+}
+
+.month__grid {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  grid-auto-rows: 1fr;
+}
+
+.month__cell {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 4px;
+  padding: 6px 8px;
+  border-left: 1px solid var(--grid-line);
+  border-top: 1px solid var(--grid-line);
+  background: var(--paper);
+  text-align: left;
+  cursor: pointer;
+  min-height: 0;
+}
+
+/* Densidade — tom neutro, nunca cor de classe (handoff §4) */
+.month__cell--d1 { background: #f4f4f6; }
+.month__cell--d2 { background: #ebebef; }
+.month__cell--d3 { background: #e0e0e6; }
+
+.month__cell--out {
+  opacity: 0.45;
+}
+
+.month__num {
+  font-size: 11.5px;
+  color: var(--slate);
+  align-self: flex-start;
+}
+
+.month__num--today {
+  background: var(--ui);
+  color: #fff;
+  border-radius: 999px;
+  padding: 1px 6px;
+  font-weight: 600;
+}
+
+.month__chips {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.chip {
+  font-size: 9.5px;
+  padding: 1px 5px;
+  border-radius: 5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chip--deadline {
+  background: #f9eed7;
+  color: #8a5212;
+  border: 1px solid #c8993f;
+}
+
+/* ===========================================================================
+   Painel lateral (380px) + scrim
+   ========================================================================== */
 .scrim {
   position: absolute;
   inset: 0;
   background: var(--scrim);
+  z-index: 10;
 }
 
 .sidepanel {
@@ -336,6 +593,211 @@
   right: 0;
   bottom: 0;
   width: var(--panel-w);
+  display: flex;
+  flex-direction: column;
   background: var(--paper);
   box-shadow: var(--sh-panel);
+  z-index: 11;
+  animation: panel-in 0.16s ease-out;
+}
+
+@keyframes panel-in {
+  from { transform: translateX(12px); opacity: 0.6; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+.sidepanel__accent {
+  height: 4px;
+  flex: 0 0 4px;
+}
+
+.sidepanel__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 18px 10px;
+}
+
+.sidepanel__title {
+  font-size: var(--fs-section);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+.sidepanel__close {
+  border: none;
+  background: transparent;
+  font-size: 16px;
+  color: var(--muted);
+  line-height: 1;
+}
+
+.sidepanel__body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 4px 18px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* Campos de formulário */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.field-row {
+  display: flex;
+  gap: 10px;
+}
+
+.field-row .field {
+  flex: 1;
+}
+
+.field__label {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--slate);
+}
+
+.field__hint {
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+.field__input {
+  font-family: var(--font-ui);
+  font-size: 13px;
+  color: var(--ink);
+  padding: 7px 9px;
+  border: 1px solid var(--hairline-strong);
+  border-radius: var(--r-btn);
+  background: var(--paper);
+  width: 100%;
+}
+
+.field__input:focus {
+  outline: none;
+  border-color: var(--ui-border);
+  box-shadow: 0 0 0 2px var(--ui-tint);
+}
+
+.field__input--area {
+  resize: vertical;
+}
+
+.check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--ink);
+}
+
+.panel-section {
+  border-top: 1px solid var(--hairline);
+  padding-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.panel-section__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.panel-section__actions {
+  display: flex;
+  gap: 8px;
+}
+
+.statustag {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 5px;
+  background: var(--basica-bg);
+  color: var(--slate);
+}
+
+.statustag--pendente {
+  background: var(--pend-bg);
+  color: var(--pend-tx);
+}
+
+.statustag--concluido {
+  background: var(--done-bg);
+  color: var(--done);
+}
+
+.panel-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  border-top: 1px solid var(--hairline);
+  padding-top: 14px;
+  margin-top: auto;
+}
+
+/* Lista de Pendentes */
+.pending {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pending__empty {
+  font-size: 13px;
+  color: var(--done);
+}
+
+.pending__item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 10px 10px 14px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-card);
+  overflow: hidden;
+}
+
+.pending__acc {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+}
+
+.pending__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.pending__title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.pending__when {
+  font-size: 11px;
+  color: var(--pend-tx);
+  margin-top: 1px;
+}
+
+.pending__actions {
+  display: flex;
+  gap: 6px;
 }
