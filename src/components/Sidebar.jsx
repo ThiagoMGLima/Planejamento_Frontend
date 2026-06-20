@@ -1,56 +1,37 @@
-import { CLASSES_PADRAO } from '../store/seed.js'
+import { useStore } from '../store/store.jsx'
+import MiniCalendar from './MiniCalendar.jsx'
+import InboxCard from './InboxCard.jsx'
 
 /**
- * Sidebar (232px) — mini-calendário + Inbox em placeholder (Marco 1). O
- * mini-calendário funcional e os InboxCards draggable chegam nos Marcos 2–3.
- * Mostramos as 5 classes padrão seedadas como legenda, provando que o estado
- * inicial existe e que cada cor vem da classe.
+ * Sidebar (232px) — mini-calendário (oculto na view Mês, decisão do handoff §4)
+ * + Inbox de tarefas (cards a partir do store). O arrasto card → horário chega
+ * no Marco 3; aqui clicar num card abre o painel do evento futuro (placeholder
+ * via seleção) — por ora os cards só listam.
  */
 export default function Sidebar() {
+  const store = useStore()
+  const inbox = store.tarefas.filter((t) => t.status === 'INBOX')
+  const showMini = store.view !== 'mes'
+
   return (
     <aside className="sidebar">
-      {/* Mini-calendário — placeholder de grade (handoff §3) */}
-      <section className="sidebar__block">
-        <h2 className="sidebar__title mono">jun 2026</h2>
-        <div className="minical" aria-hidden="true">
-          {Array.from({ length: 35 }, (_, i) => (
-            <span key={i} className="minical__cell mono">
-              {i < 30 ? i + 1 : ''}
-            </span>
-          ))}
-        </div>
-      </section>
+      {showMini && (
+        <section className="sidebar__block">
+          <MiniCalendar />
+        </section>
+      )}
 
-      {/* Inbox — placeholder; cards draggable chegam no Marco 3 */}
       <section className="sidebar__block sidebar__block--grow">
         <h2 className="sidebar__title">Inbox</h2>
-        <p className="sidebar__empty">
-          Sem tarefas ainda. No Marco 2, tarefas aparecem aqui como cards
-          arrastáveis para o calendário.
-        </p>
-      </section>
-
-      {/* Legenda das classes padrão — confirma o estado inicial seedado (§2.2) */}
-      <section className="sidebar__block">
-        <h2 className="sidebar__title">Classes</h2>
-        <ul className="legend">
-          {CLASSES_PADRAO.map((c) => (
-            <li key={c.id} className="legend__item">
-              <span
-                className="legend__swatch"
-                style={{ background: c.cor.bg, borderColor: c.cor.st }}
-              />
-              <span className="legend__name" style={{ color: c.cor.tx }}>
-                {c.nome}
-              </span>
-              {c.rastreia_conclusao && (
-                <span className="legend__track mono" title="rastreia conclusão">
-                  ✓
-                </span>
-              )}
-            </li>
-          ))}
-        </ul>
+        {inbox.length === 0 ? (
+          <p className="sidebar__empty">Tudo agendado — Inbox vazio.</p>
+        ) : (
+          <div className="inbox">
+            {inbox.map((t) => (
+              <InboxCard key={t.id} tarefa={t} classe={store.classeById(t.classe)} />
+            ))}
+          </div>
+        )}
       </section>
     </aside>
   )

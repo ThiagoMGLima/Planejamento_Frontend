@@ -24,14 +24,19 @@ npm run build    # build de produção
 
 ## Estado do projeto — Marcos
 
-- **Marco 1 (este PR) — Fundação, design tokens e shell.** Scaffolding Vite +
-  React; `src/styles/tokens.css` com todos os tokens do handoff §2.2–2.4;
-  fontes; shell de layout (topbar 52px, sidebar 232px, área de calendário,
-  slot do painel 380px) sem lógica; modelo de dados em JSDoc
-  (`src/store/types.js`); 5 classes padrão seedadas (`src/store/seed.js`).
-- **Marco 2** — store local (localStorage `planejador:v2`), componentes e views.
-- **Marco 3** — comportamentos (arrasto Inbox→horário, conclusão/pendência,
-  recorrência, feriados).
+- **Marco 1 — Fundação, design tokens e shell.** Scaffolding Vite + React;
+  `src/styles/tokens.css` com todos os tokens do handoff §2.2–2.4; fontes;
+  shell de layout; modelo de dados em JSDoc (`src/store/types.js`); 5 classes
+  padrão seedadas (`src/store/seed.js`).
+- **Marco 2 (este PR) — Componentes e telas.** Store local (contexto + reducer
+  + persistência em `localStorage`, chave `planejador:v2`) com interface única
+  de CRUD; componentes (`EventBlock`, `InboxCard`, `MiniCalendar`, `NowLine`,
+  `SidePanel`, `Topbar`); views **Dia/Semana/Mês** renderizando do store;
+  painéis do **Evento** e de **Pendentes** (abrir/fechar por ✕/scrim/Esc);
+  navegação de views (segmented, setas, "Hoje"). Estado seedado com dados de
+  exemplo na primeira carga.
+- **Marco 3** — comportamentos (arrasto Inbox→horário, conclusão/pendência
+  derivada, recorrência, feriados).
 - **Marco 4** — integração com a API local (`VITE_API_URL`), testes e build.
 
 ## Backend
