@@ -185,6 +185,25 @@ export function monthGrid(date) {
   return weeks
 }
 
+/**
+ * Janela de datas [start, end) que uma view cobre, para buscar do backend.
+ * `end` é exclusivo (dia seguinte ao último visível).
+ * @returns {{ start: Date, end: Date }}
+ */
+export function viewWindow(view, cursorISO) {
+  const cursor = new Date(cursorISO)
+  if (view === 'dia') {
+    const start = startOfDay(cursor)
+    return { start, end: addDays(start, 1) }
+  }
+  if (view === 'mes') {
+    const flat = monthGrid(cursor).flat()
+    return { start: startOfDay(flat[0]), end: addDays(flat[flat.length - 1], 1) }
+  }
+  const d = weekDays(cursor)
+  return { start: startOfDay(d[0]), end: addDays(d[6], 1) }
+}
+
 /** Rótulo curto de navegação conforme a view (ex.: "16–22 jun · 2026"). */
 export function rangeLabel(cursorDate, view) {
   const d = toDate(cursorDate)

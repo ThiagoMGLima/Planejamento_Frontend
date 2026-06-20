@@ -15,7 +15,9 @@ import { statusEfetivo } from '../lib/status.js'
  * painel e relógio são transientes.
  */
 
-const StoreContext = createContext(null)
+// Exportado para o ApiStoreProvider (Marco 4) reusar o MESMO contexto/hook.
+// eslint-disable-next-line react-refresh/only-export-components
+export const StoreContext = createContext(null)
 
 function persistable(state) {
   const { classes, tarefas, eventos, feriados, view, cursorISO } = state

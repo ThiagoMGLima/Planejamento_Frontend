@@ -26,16 +26,23 @@ npm run lint         # ESLint
 npm run format       # Prettier (escreve)
 ```
 
-## Configuração (.env)
-
-A integração com o backend (Marco 4) lê `VITE_API_URL`. Copie o exemplo:
+## Configuração (.env) — origem dos dados
 
 ```bash
-cp .env.example .env   # VITE_API_URL=http://localhost:8000/api/v1
+cp .env.example .env
 ```
 
-Nos Marcos 1–3 a variável é ignorada — o app roda 100% sobre `localStorage`
-(chave `planejador:v2`).
+- `VITE_DATA_SOURCE=local` (padrão) — store em `localStorage` (chave
+  `planejador:v2`). Roda sem backend.
+- `VITE_DATA_SOURCE=api` — consome o backend HTTP em `VITE_API_URL`
+  (ex.: `http://localhost:8000/api/v1`). Suba o backend antes:
+
+  ```bash
+  cd ../backend/Planejamento_Backend && cp .env.example .env && docker compose up -d --build web
+  ```
+
+A interface do store é a mesma nos dois modos — só troca o provider
+(`src/store/store.jsx` ↔ `src/store/apiStore.jsx`).
 
 ## Estado do projeto — Marcos
 
@@ -53,17 +60,20 @@ Nos Marcos 1–3 a variável é ignorada — o app roda 100% sobre `localStorage
   nunca persistido); Concluir/Remarcar (Remarcar devolve ao Inbox);
   **recorrência** (editor + expansão local); **feriados** como etiqueta, nunca
   bloco.
-- **Marco 4 — em andamento.**
-  - **Parte 1 (este PR):** infra de testes (**Vitest + React Testing Library**)
-    e suíte cobrindo `status_efetivo`, snap/grade, expansão de recorrência,
-    `EventBlock` e o store; **ESLint + Prettier**; e o **esqueleto do cliente
-    HTTP** (`src/lib/api.js`) com os endpoints do PLAN (sem auth).
-  - **Parte 2 (a seguir):** trocar a implementação do `store` por `src/lib/api.js`
-    quando o contrato do backend (OpenAPI) for confirmado — a interface do store
-    não muda, então views/componentes ficam intactos.
+- **Marco 4 — Integração com a API, testes e build.**
+  - **Parte 1:** infra de testes (**Vitest + React Testing Library**), **ESLint
+    + Prettier** e o esqueleto do cliente HTTP.
+  - **Parte 2 (este PR):** **integração real com o backend**. `src/lib/api.js`
+    (slashes/paginação/escopo do contrato real), `src/store/mappers.js`
+    (DTO↔modelo: cor hex↔`{bg,st,tx}`, `descricao`↔`detalhes`, `classe_id`,
+    conversão de dia da semana 0=seg↔0=dom, ocorrência↔instância) e
+    `src/store/apiStore.jsx` (mesma interface do store, sobre HTTP). Selecionado
+    por `VITE_DATA_SOURCE`. Expansão de recorrência, `status_efetivo` e feriados
+    passam a vir do servidor.
 
 ## Backend
 
-Repo separado (`planejador-backend`) expõe uma API REST **local e sem
-autenticação** (single-user). O frontend não tem login. Até o Marco 4 o app roda
-inteiramente sobre `localStorage`, espelhando os formatos da API.
+Repo separado (`../backend/Planejamento_Backend`, Django + DRF) expõe uma API
+REST **local e sem autenticação** (single-user) sob `/api/v1`. O frontend não
+tem login. Com `VITE_DATA_SOURCE=local` o app roda 100% sobre `localStorage`;
+com `=api` consome a API real.

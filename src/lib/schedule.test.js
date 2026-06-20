@@ -11,12 +11,12 @@ function fakeStore(tarefas) {
 }
 
 describe('scheduleTarefaDrop', () => {
-  it('cria evento com duração = esforço estimado e abre o painel', () => {
+  it('cria evento com duração = esforço estimado e abre o painel', async () => {
     const store = fakeStore([
       { id: 't1', titulo: 'Estudar', esforco_estimado: 120, status: 'INBOX' },
     ])
     const inicio = new Date(2026, 5, 15, 14, 0)
-    scheduleTarefaDrop(store, 't1', inicio)
+    await scheduleTarefaDrop(store, 't1', inicio)
 
     expect(store.promoverTarefa).toHaveBeenCalledTimes(1)
     const [, passedInicio, fim] = store.promoverTarefa.mock.calls[0]
@@ -25,25 +25,25 @@ describe('scheduleTarefaDrop', () => {
     expect(store.openEventPanel).toHaveBeenCalledWith('evento_novo')
   })
 
-  it('usa 1h quando a tarefa não tem esforço', () => {
+  it('usa 1h quando a tarefa não tem esforço', async () => {
     const store = fakeStore([{ id: 't2', titulo: 'Ler', status: 'INBOX' }])
-    scheduleTarefaDrop(store, 't2', new Date(2026, 5, 15, 9, 0))
+    await scheduleTarefaDrop(store, 't2', new Date(2026, 5, 15, 9, 0))
     const fim = store.promoverTarefa.mock.calls[0][2]
     expect(decimalHour(fim)).toBe(10)
   })
 
-  it('recorta o fim na faixa (23:30)', () => {
+  it('recorta o fim na faixa (23:30)', async () => {
     const store = fakeStore([
       { id: 't3', titulo: 'Projeto', esforco_estimado: 180, status: 'INBOX' },
     ])
-    scheduleTarefaDrop(store, 't3', new Date(2026, 5, 15, 23, 0))
+    await scheduleTarefaDrop(store, 't3', new Date(2026, 5, 15, 23, 0))
     const fim = store.promoverTarefa.mock.calls[0][2]
     expect(decimalHour(fim)).toBe(23.5)
   })
 
-  it('ignora drop de tarefa inexistente', () => {
+  it('ignora drop de tarefa inexistente', async () => {
     const store = fakeStore([])
-    scheduleTarefaDrop(store, 'naoexiste', new Date())
+    await scheduleTarefaDrop(store, 'naoexiste', new Date())
     expect(store.promoverTarefa).not.toHaveBeenCalled()
   })
 })
