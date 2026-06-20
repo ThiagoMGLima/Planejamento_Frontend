@@ -4,17 +4,20 @@ import { monthGrid, sameDay, toDateISO, WEEKDAYS_SHORT } from '../lib/dates.js'
 /**
  * Mês (handoff §4) — panorama com densidade por TOM NEUTRO (quanto mais cheio o
  * dia, mais forte o cinza; sinal neutro, nunca cor de classe) e chips só para
- * ÂNCORAS: deadlines (âmbar ◆). Feriados (etiqueta vermelha) chegam no Marco 3.
- * Rotina não é listada. Clicar num dia abre a view Dia naquele dia.
+ * ÂNCORAS: deadlines (âmbar ◆) e FERIADOS (etiqueta vermelha). Rotina (inclusive
+ * recorrente) entra só na densidade, não é listada. Clicar num dia abre o Dia.
  */
 export default function MonthView() {
   const store = useStore()
   const cursor = new Date(store.cursorISO)
-  const today = new Date()
+  const today = store.now
   const weeks = monthGrid(cursor)
+  const flat = weeks.flat()
+  // Expande ocorrências em toda a janela do mês de uma vez (densidade).
+  const instances = store.instancesInRange(flat[0], flat[flat.length - 1])
 
   function densityLevel(day) {
-    const n = store.eventos.filter((e) => sameDay(e.inicio, day)).length
+    const n = instances.filter((i) => sameDay(i.inicio, day)).length
     if (n === 0) return 0
     if (n <= 1) return 1
     if (n <= 3) return 2
@@ -40,11 +43,12 @@ export default function MonthView() {
         ))}
       </div>
       <div className="month__grid">
-        {weeks.flat().map((day) => {
+        {flat.map((day) => {
           const inMonth = day.getMonth() === cursor.getMonth()
           const isToday = sameDay(day, today)
           const lvl = densityLevel(day)
           const dls = deadlines(day)
+          const feriado = store.feriadoByDate(toDateISO(day))
           const cls = [
             'month__cell',
             `month__cell--d${lvl}`,
@@ -59,6 +63,11 @@ export default function MonthView() {
                 {day.getDate()}
               </span>
               <span className="month__chips">
+                {feriado && (
+                  <span className="chip chip--feriado mono" title={feriado.nome}>
+                    {feriado.nome}
+                  </span>
+                )}
                 {dls.map((t) => (
                   <span key={t.id} className="chip chip--deadline mono" title={`deadline · ${t.titulo}`}>
                     ◆ {t.titulo}

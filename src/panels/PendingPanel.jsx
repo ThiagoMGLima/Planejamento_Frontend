@@ -9,9 +9,9 @@ import { formatTime, sameDay, WEEKDAYS_SHORT, MONTHS_SHORT } from '../lib/dates.
  */
 export default function PendingPanel() {
   const store = useStore()
-  const pendentes = store.eventos.filter(
-    (e) => e.rastrear_conclusao && e.status === 'PENDENTE',
-  )
+  // Pendência DERIVADA (status_efetivo) — inclui eventos que venceram sozinhos
+  // e ocorrências recorrentes pendentes na janela recente.
+  const pendentes = store.pendingInstances()
 
   return (
     <SidePanel title="Pendentes" accent="var(--pend)" onClose={store.closePanel}>
@@ -19,20 +19,20 @@ export default function PendingPanel() {
         <p className="pending__empty">✓ Tudo resolvido — nada pendente.</p>
       ) : (
         <ul className="pending">
-          {pendentes.map((e) => {
-            const classe = store.classeById(e.classe)
+          {pendentes.map((inst) => {
+            const classe = store.classeById(inst.classe)
             return (
-              <li key={e.id} className="pending__item">
+              <li key={inst.id} className="pending__item">
                 <span className="pending__acc" style={{ background: classe?.cor?.st }} />
                 <div className="pending__body">
-                  <div className="pending__title">{e.titulo}</div>
-                  <div className="pending__when mono">{formatWhen(e.inicio, e.fim)}</div>
+                  <div className="pending__title">{inst.titulo}</div>
+                  <div className="pending__when mono">{formatWhen(inst.inicio, inst.fim, store.now)}</div>
                 </div>
                 <div className="pending__actions">
-                  <button className="btn btn--done btn--sm" type="button" onClick={() => store.concluir(e.id)}>
+                  <button className="btn btn--done btn--sm" type="button" title="Concluir" onClick={() => store.concluir(inst)}>
                     ✓
                   </button>
-                  <button className="btn btn--ghost btn--sm" type="button" onClick={() => store.remarcar(e.id)}>
+                  <button className="btn btn--ghost btn--sm" type="button" title="Remarcar (volta ao Inbox)" onClick={() => store.remarcar(inst)}>
                     ↻
                   </button>
                 </div>
@@ -45,9 +45,9 @@ export default function PendingPanel() {
   )
 }
 
-function formatWhen(inicio, fim) {
+function formatWhen(inicio, fim, now) {
   const d = new Date(inicio)
-  const hoje = sameDay(d, new Date())
+  const hoje = sameDay(d, now)
   const data = hoje ? 'hoje' : `${WEEKDAYS_SHORT[d.getDay()]} ${d.getDate()} ${MONTHS_SHORT[d.getMonth()]}`
   return `${data} · ${formatTime(inicio)}–${formatTime(fim)}`
 }

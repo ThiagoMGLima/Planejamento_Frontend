@@ -1,19 +1,18 @@
 import { formatTime } from '../lib/dates.js'
+import { statusEfetivo } from '../lib/status.js'
 
 /**
  * Bloco de evento (handoff §3). Regra inviolável: a COR vem sempre da classe; o
- * ESTADO é tratamento (borda/opacidade/ícone), nunca outra matiz.
+ * ESTADO é tratamento (borda/opacidade/ícone), nunca outra matiz. O status é
+ * DERIVADO no cliente (status_efetivo): PENDENTE aparece sozinho ao vencer.
  *
- * Estados:
- *  - agendado:   fundo + texto da classe
- *  - pendente:   borda 1.5px dashed âmbar + ⚠, sem sombra
- *  - concluído:  opacity .55 + ✓ + line-through
- *  - selecionado: borda 1.5px na cor da classe + sombra realçada
+ * Estados: agendado · pendente (dashed âmbar + ⚠, sem sombra) · concluído
+ * (opacity .55 + ✓ + line-through) · selecionado (borda cor-da-classe + sombra).
  *
- * @param {{ evento: any, classe: any, selected?: boolean, style?: object, onClick?: Function }} props
+ * @param {{ instance: any, classe: any, now?: Date, selected?: boolean, style?: object, onClick?: Function }} props
  */
-export default function EventBlock({ evento, classe, selected = false, style, onClick }) {
-  const status = evento.rastrear_conclusao ? evento.status : undefined
+export default function EventBlock({ instance, classe, now = new Date(), selected = false, style, onClick }) {
+  const status = statusEfetivo(instance, now)
   const pendente = status === 'PENDENTE'
   const concluido = status === 'CONCLUIDO'
   const cor = classe?.cor ?? { bg: '#eee', st: '#ccc', tx: '#333' }
@@ -41,11 +40,11 @@ export default function EventBlock({ evento, classe, selected = false, style, on
       <span className="event__title">
         {pendente && '⚠ '}
         {concluido && '✓ '}
-        {evento.titulo}
+        {instance.titulo}
       </span>
       {showTime && (
         <span className="event__time mono">
-          {formatTime(evento.inicio)}–{formatTime(evento.fim)}
+          {formatTime(instance.inicio)}–{formatTime(instance.fim)}
         </span>
       )}
     </button>

@@ -28,15 +28,18 @@ npm run build    # build de produção
   `src/styles/tokens.css` com todos os tokens do handoff §2.2–2.4; fontes;
   shell de layout; modelo de dados em JSDoc (`src/store/types.js`); 5 classes
   padrão seedadas (`src/store/seed.js`).
-- **Marco 2 (este PR) — Componentes e telas.** Store local (contexto + reducer
-  + persistência em `localStorage`, chave `planejador:v2`) com interface única
-  de CRUD; componentes (`EventBlock`, `InboxCard`, `MiniCalendar`, `NowLine`,
-  `SidePanel`, `Topbar`); views **Dia/Semana/Mês** renderizando do store;
-  painéis do **Evento** e de **Pendentes** (abrir/fechar por ✕/scrim/Esc);
-  navegação de views (segmented, setas, "Hoje"). Estado seedado com dados de
-  exemplo na primeira carga.
-- **Marco 3** — comportamentos (arrasto Inbox→horário, conclusão/pendência
-  derivada, recorrência, feriados).
+- **Marco 2 — Componentes e telas.** Store local (contexto + reducer +
+  persistência em `localStorage`, chave `planejador:v2`) com interface única de
+  CRUD; componentes (`EventBlock`, `InboxCard`, `MiniCalendar`, `NowLine`,
+  `SidePanel`, `Topbar`); views **Dia/Semana/Mês**; painéis do **Evento** e de
+  **Pendentes**; navegação de views.
+- **Marco 3 (este PR) — Comportamentos e interações.** Arrasto Inbox→horário
+  com **snap de 15min** e fantasma; **pendência derivada** (`status_efetivo`
+  calculado no cliente por um relógio, nunca persistido); Concluir/Remarcar
+  (Remarcar devolve ao Inbox); **recorrência** (editor "Repetir na rotina" +
+  expansão local das ocorrências na janela); **feriados** como etiqueta
+  vermelha (cabeçalho/mini-calendário/Mês), nunca bloco. Esc/scrim/✕ fecham
+  qualquer painel.
 - **Marco 4** — integração com a API local (`VITE_API_URL`), testes e build.
 
 ## Backend

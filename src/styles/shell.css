@@ -342,10 +342,17 @@
 .calendar__dayhead {
   flex: 1;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 2px;
   border-left: 1px solid var(--grid-line);
+}
+
+.calendar__dayhead-main {
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .calendar__dayhead.is-today {
@@ -800,4 +807,98 @@
 .pending__actions {
   display: flex;
   gap: 6px;
+}
+
+/* ===========================================================================
+   Marco 3 — fantasma do arrasto, feriados, recorrência
+   ========================================================================== */
+
+/* Fantasma do arrasto Inbox → horário */
+.ghost {
+  position: absolute;
+  height: 38px; /* ~1h de referência enquanto arrasta */
+  border: 1.5px dashed var(--ui);
+  border-radius: var(--r-event);
+  background: var(--ui-tint);
+  pointer-events: none;
+  z-index: 4;
+  display: flex;
+  align-items: flex-start;
+  padding: 2px 8px;
+}
+
+.ghost__time {
+  font-size: var(--fs-time);
+  font-weight: 600;
+  color: var(--ui-strong);
+}
+
+/* Etiqueta de feriado no cabeçalho de dia (vermelho, nunca um bloco) */
+.feriado-tag {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--crit);
+  background: var(--prova-bg);
+  border: 1px solid var(--prova-st);
+  border-radius: 4px;
+  padding: 0 5px;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Chip de feriado no Mês */
+.chip--feriado {
+  background: var(--prova-bg);
+  color: var(--crit);
+  border: 1px solid var(--prova-st);
+}
+
+/* Mini-calendário — dia de feriado em vermelho */
+.minical__cell--feriado {
+  color: var(--crit);
+  font-weight: 600;
+}
+
+/* Editor de recorrência */
+.recur {
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.recur__dias {
+  display: flex;
+  gap: 4px;
+}
+
+.recur__dia {
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--hairline-strong);
+  border-radius: 7px;
+  background: var(--paper);
+  color: var(--slate);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.recur__dia--on {
+  background: var(--ui);
+  border-color: var(--ui);
+  color: #fff;
+}
+
+.check--sm {
+  font-size: 12px;
+  color: var(--slate);
+}
+
+.statustag--remarcado {
+  background: var(--ui-tint);
+  color: var(--ui-strong);
 }

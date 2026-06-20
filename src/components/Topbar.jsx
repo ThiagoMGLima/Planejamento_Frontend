@@ -1,5 +1,6 @@
 import { useStore } from '../store/store.jsx'
 import { rangeLabel } from '../lib/dates.js'
+import { statusEfetivo } from '../lib/status.js'
 
 /**
  * Topbar (52px) — store-driven (handoff §3). Segmented Dia/Semana/Mês, setas
@@ -17,12 +18,12 @@ export default function Topbar() {
   const store = useStore()
   const cursor = new Date(store.cursorISO)
 
-  const pendentes = store.eventos.filter(
-    (e) => e.rastrear_conclusao && e.status === 'PENDENTE',
-  ).length
+  // Pendência derivada (status_efetivo) sobre instâncias da janela recente.
+  const pendentes = store.pendingInstances().length
 
-  const sel = store.selectedId ? store.eventoById(store.selectedId) : null
-  const selRastreavel = sel?.rastrear_conclusao && sel?.status !== 'CONCLUIDO'
+  const sel = store.selectedInstance
+  const selStatus = sel ? statusEfetivo(sel, store.now) : undefined
+  const selRastreavel = sel?.rastrear_conclusao && selStatus !== 'CONCLUIDO' && selStatus !== 'REMARCADO'
 
   return (
     <header className="topbar">
@@ -69,7 +70,7 @@ export default function Topbar() {
           className="btn btn--done"
           type="button"
           disabled={!selRastreavel}
-          onClick={() => sel && store.concluir(sel.id)}
+          onClick={() => sel && store.concluir(sel)}
         >
           ✓ Concluir
         </button>
@@ -77,7 +78,7 @@ export default function Topbar() {
           className="btn btn--ghost"
           type="button"
           disabled={!sel}
-          onClick={() => sel && store.remarcar(sel.id)}
+          onClick={() => sel && store.remarcar(sel)}
         >
           ↻ Remarcar
         </button>
@@ -85,7 +86,7 @@ export default function Topbar() {
           className="btn btn--ui"
           type="button"
           disabled={!sel}
-          onClick={() => sel && store.openEventPanel(sel.id)}
+          onClick={() => sel && store.openEventPanel(sel.eventoId, sel)}
         >
           Salvar
         </button>

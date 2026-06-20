@@ -1,13 +1,15 @@
 import { useEffect, useState } from 'react'
 import { useStore } from '../store/store.jsx'
 import SidePanel from '../components/SidePanel.jsx'
-import { toISO } from '../lib/dates.js'
+import { toISO, WEEKDAYS_SHORT } from '../lib/dates.js'
+import { statusEfetivo } from '../lib/status.js'
 
 /**
  * Painel do Evento (handoff §4) — seletor de classe (define a cor e pré-marca
- * "Acompanhar conclusão" pelo padrão da classe), início/fim/detalhes, repetir,
- * conclusão (só se rastreável), e rodapé Excluir/Salvar. O calendário continua
- * visível atrás. O editor completo de recorrência chega no Marco 3.
+ * "Acompanhar conclusão"), início/fim/detalhes, "Repetir na rotina" (dias da
+ * semana + ignorar feriados), conclusão (só se rastreável) e rodapé
+ * Excluir/Salvar. Salvar edita a SÉRIE (evento-base); Concluir/Remarcar agem
+ * sobre a OCORRÊNCIA selecionada.
  *
  * @param {{ eventId: string }} props
  */
@@ -24,6 +26,10 @@ export default function EventPanel({ eventId }) {
 
   if (!evento) return null
   const classe = store.classeById(form.classe)
+  // Instância para a conclusão: a selecionada (pode ser uma ocorrência) ou o
+  // próprio evento tratado como instância única.
+  const instance = store.selectedInstance ?? baseInstance(evento)
+  const status = statusEfetivo(instance, store.now)
 
   function set(patch) {
     setForm((f) => ({ ...f, ...patch }))
@@ -31,11 +37,15 @@ export default function EventPanel({ eventId }) {
 
   function onClasse(id) {
     const c = store.classeById(id)
-    // Trocar de classe re-aplica o padrão de rastreamento da nova classe.
     set({ classe: id, rastrear_conclusao: c ? c.rastreia_conclusao : form.rastrear_conclusao })
   }
 
+  function toggleDia(d) {
+    set({ dias: form.dias.includes(d) ? form.dias.filter((x) => x !== d) : [...form.dias, d].sort() })
+  }
+
   function salvar() {
+    const repetir = form.repetir && form.dias.length > 0
     store.updateEvento({
       id: evento.id,
       titulo: form.titulo.trim() || 'Sem título',
@@ -44,7 +54,10 @@ export default function EventPanel({ eventId }) {
       fim: toISO(form.fim),
       detalhes: form.detalhes || undefined,
       rastrear_conclusao: form.rastrear_conclusao,
-      status: form.rastrear_conclusao ? evento.status ?? 'AGENDADO' : undefined,
+      status: form.rastrear_conclusao ? (evento.status ?? 'AGENDADO') : undefined,
+      regra_recorrencia: repetir
+        ? { tipo: 'SEMANAL', dias: form.dias, ignorar_feriados: form.ignorarFeriados }
+        : undefined,
     })
     store.closePanel()
   }
@@ -53,11 +66,7 @@ export default function EventPanel({ eventId }) {
     <SidePanel title="Evento" accent={classe?.cor?.st} onClose={store.closePanel}>
       <label className="field">
         <span className="field__label">Título</span>
-        <input
-          className="field__input"
-          value={form.titulo}
-          onChange={(e) => set({ titulo: e.target.value })}
-        />
+        <input className="field__input" value={form.titulo} onChange={(e) => set({ titulo: e.target.value })} />
       </label>
 
       <label className="field">
@@ -111,31 +120,63 @@ export default function EventPanel({ eventId }) {
         <span>Acompanhar conclusão</span>
       </label>
 
-      {/* Repetir na rotina — editor completo de recorrência no Marco 3 */}
+      {/* Repetir na rotina — dias da semana + ignorar feriados (handoff §4) */}
       <div className="field">
-        <span className="field__label">Repetir na rotina</span>
-        <p className="field__hint">Editor de recorrência (dias + ignorar feriados) chega no Marco 3.</p>
+        <label className="check">
+          <input
+            type="checkbox"
+            checked={form.repetir}
+            onChange={(e) => set({ repetir: e.target.checked, dias: e.target.checked && form.dias.length === 0 ? [form.inicio.getDay()] : form.dias })}
+          />
+          <span>Repetir na rotina</span>
+        </label>
+        {form.repetir && (
+          <div className="recur">
+            <div className="recur__dias">
+              {WEEKDAYS_SHORT.map((d, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  className={`recur__dia ${form.dias.includes(i) ? 'recur__dia--on' : ''}`}
+                  onClick={() => toggleDia(i)}
+                >
+                  {d[0]}
+                </button>
+              ))}
+            </div>
+            <label className="check check--sm">
+              <input
+                type="checkbox"
+                checked={form.ignorarFeriados}
+                onChange={(e) => set({ ignorarFeriados: e.target.checked })}
+              />
+              <span>Ignorar feriados</span>
+            </label>
+          </div>
+        )}
       </div>
 
-      {/* Conclusão — só para eventos rastreáveis */}
+      {/* Conclusão — só para eventos/ocorrências rastreáveis */}
       {form.rastrear_conclusao && (
         <div className="panel-section">
           <div className="panel-section__row">
-            <span className="field__label">Status</span>
-            <span className={`statustag statustag--${(evento.status ?? 'AGENDADO').toLowerCase()}`}>
-              {labelStatus(evento.status)}
+            <span className="field__label">
+              Status{instance.recorrente ? ' (esta ocorrência)' : ''}
+            </span>
+            <span className={`statustag statustag--${(status ?? 'AGENDADO').toLowerCase()}`}>
+              {labelStatus(status)}
             </span>
           </div>
           <div className="panel-section__actions">
             <button
               className="btn btn--done"
               type="button"
-              disabled={evento.status === 'CONCLUIDO'}
-              onClick={() => store.concluir(evento.id)}
+              disabled={status === 'CONCLUIDO'}
+              onClick={() => store.concluir(instance)}
             >
               ✓ Concluir
             </button>
-            <button className="btn btn--ghost" type="button" onClick={() => store.remarcar(evento.id)}>
+            <button className="btn btn--ghost" type="button" onClick={() => store.remarcar(instance)}>
               ↻ Remarcar
             </button>
           </div>
@@ -163,8 +204,12 @@ export default function EventPanel({ eventId }) {
 
 function fromEvento(evento, store) {
   if (!evento) {
-    return { titulo: '', classe: store.classes[0]?.id ?? '', inicio: new Date(), fim: new Date(), detalhes: '', rastrear_conclusao: false }
+    return {
+      titulo: '', classe: store.classes[0]?.id ?? '', inicio: new Date(), fim: new Date(),
+      detalhes: '', rastrear_conclusao: false, repetir: false, dias: [], ignorarFeriados: false,
+    }
   }
+  const regra = evento.regra_recorrencia
   return {
     titulo: evento.titulo,
     classe: evento.classe,
@@ -172,6 +217,23 @@ function fromEvento(evento, store) {
     fim: new Date(evento.fim),
     detalhes: evento.detalhes ?? '',
     rastrear_conclusao: !!evento.rastrear_conclusao,
+    repetir: !!(regra && regra.dias?.length),
+    dias: regra?.dias ?? [],
+    ignorarFeriados: !!regra?.ignorar_feriados,
+  }
+}
+
+/** Constrói uma instância única a partir de um evento não-recorrente. */
+function baseInstance(evento) {
+  return {
+    id: evento.id,
+    eventoId: evento.id,
+    recorrente: false,
+    occDateISO: null,
+    rastrear_conclusao: !!evento.rastrear_conclusao,
+    status: evento.status,
+    inicio: evento.inicio,
+    fim: evento.fim,
   }
 }
 

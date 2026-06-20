@@ -10,6 +10,8 @@ export const DAY_START = 6
 export const DAY_END = 23.5
 /** Altura de 1h na grade, em px (token --hour-h). @type {number} */
 export const HOUR_PX = 38
+/** Snap do arrasto, em horas (15min = 0.25h). @type {number} */
+export const SNAP_HOURS = 0.25
 
 /** Dias da semana em pt-BR, abreviados (índice 0 = domingo). @type {string[]} */
 export const WEEKDAYS_SHORT = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb']
@@ -120,6 +122,32 @@ export function gridPosition(inicio, fim) {
   const top = (start - DAY_START) * HOUR_PX
   const height = Math.max((end - start) * HOUR_PX, 16) // altura mínima legível
   return { top, height }
+}
+
+/**
+ * Converte um Y (px, relativo ao topo da coluna) em hora decimal com snap de
+ * 15min, recortada à faixa 06:00–23:30 (handoff §5).
+ * @returns {number} hora decimal (ex.: 13.25 = 13:15).
+ */
+export function snapHourFromY(y) {
+  const raw = DAY_START + y / HOUR_PX
+  const snapped = Math.round(raw / SNAP_HOURS) * SNAP_HOURS
+  return Math.min(Math.max(snapped, DAY_START), DAY_END)
+}
+
+/** Hora decimal → "HH:MM" (13.25 → "13:15"). */
+export function formatDecimalHour(h) {
+  const hh = Math.floor(h)
+  const mm = Math.round((h - hh) * 60)
+  return `${String(hh).padStart(2, '0')}:${String(mm).padStart(2, '0')}`
+}
+
+/** Aplica uma hora decimal a um dia, devolvendo um Date. */
+export function dateAtHour(day, decimalH) {
+  const d = toDate(day)
+  const hh = Math.floor(decimalH)
+  const mm = Math.round((decimalH - hh) * 60)
+  return new Date(d.getFullYear(), d.getMonth(), d.getDate(), hh, mm, 0)
 }
 
 /**
