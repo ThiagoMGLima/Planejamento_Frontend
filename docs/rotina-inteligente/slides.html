@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rotina Inteligente — visão & plano</title>
+<style>
+:root{
+  --font-ui:'Hanken Grotesk',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --font-mono:'IBM Plex Mono',ui-monospace,Menlo,monospace;
+  --ui:#5b4f9e; --ui-strong:#453a80; --ui-tint:#efedf8; --ui-border:#cdc7e8;
+  --pend-tx:#8a661c; --pend-bg:#faf2db; --done:#3b6d11; --done-bg:#ecf4df;
+  --ink:#1d1d22; --slate:#56565f; --muted:#9a9aa2; --paper:#fff; --page:#f6f6f8;
+  --hairline:#e6e6ea; --hairline-strong:#dcdce2;
+}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%}
+body{font-family:var(--font-ui);background:var(--page);color:var(--ink);overflow:hidden}
+.slide{position:absolute;inset:0;display:none;flex-direction:column;justify-content:center;padding:7vh 10vw;background:var(--page)}
+.slide.on{display:flex}
+.kicker{font:600 12px var(--font-mono);letter-spacing:.12em;color:var(--ui);text-transform:uppercase;margin-bottom:14px}
+h1{font-size:clamp(30px,5vw,54px);font-weight:600;letter-spacing:-.02em;line-height:1.08}
+h2{font-size:clamp(24px,3.4vw,36px);font-weight:600;letter-spacing:-.02em;margin-bottom:20px}
+p,li{font-size:clamp(14px,1.6vw,18px);color:var(--slate);line-height:1.55}
+b{color:var(--ink)}
+ul{padding-left:22px;display:grid;gap:10px;margin-top:6px}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:5vw;align-items:start}
+.mono{font-family:var(--font-mono)}
+.pill{display:inline-block;font:600 11px var(--font-mono);background:var(--ui-tint);color:var(--ui-strong);border:1px solid var(--ui-border);border-radius:5px;padding:2px 8px;margin-right:8px;vertical-align:2px}
+.stack{display:grid;gap:10px;margin-top:8px}
+.layer{background:var(--paper);border:1px solid var(--hairline-strong);border-radius:10px;padding:14px 18px}
+.layer h4{font-size:15px;font-weight:600;margin-bottom:2px}
+.layer p{font-size:13.5px}
+.layer.hl{border-color:var(--ui-border);background:var(--ui-tint)}
+.flow{display:grid;gap:0;margin-top:10px}
+.step{display:flex;gap:14px;align-items:baseline;padding:9px 0;border-bottom:1px solid var(--hairline)}
+.step:last-child{border:0}
+.step .n{font:600 12px var(--font-mono);color:var(--ui);flex:none;width:22px}
+.step p{font-size:clamp(13px,1.5vw,16px)}
+.step .who{font:600 9.5px var(--font-mono);letter-spacing:.06em;border-radius:4px;padding:2px 6px;flex:none}
+.who.code{background:var(--done-bg);color:var(--done)}
+.who.ia{background:var(--ui-tint);color:var(--ui-strong)}
+table{border-collapse:collapse;margin-top:10px;width:100%}
+td,th{font-size:clamp(12px,1.4vw,15px);text-align:left;padding:9px 14px;border-bottom:1px solid var(--hairline)}
+th{font:600 11px var(--font-mono);letter-spacing:.08em;color:var(--muted);text-transform:uppercase}
+td:first-child{font-family:var(--font-mono);font-size:12px;color:var(--ui-strong);white-space:nowrap}
+.quote{border-left:3px solid var(--ui);padding:6px 0 6px 18px;margin-top:22px}
+.quote p{font-size:clamp(15px,1.9vw,21px);color:var(--ink)}
+.hud{position:fixed;bottom:18px;right:22px;font:500 11px var(--font-mono);color:var(--muted)}
+.hint{position:fixed;bottom:18px;left:22px;font:500 11px var(--font-mono);color:var(--muted)}
+.bar{position:fixed;top:0;left:0;height:3px;background:var(--ui);transition:width .25s}
+.tag-ok{color:var(--done);font-weight:600}.tag-cost{color:var(--pend-tx);font-weight:600}
+</style>
+</head>
+<body>
+
+<section class="slide on">
+  <div class="kicker">Planejador de Rotina · próxima fase</div>
+  <h1>Rotina Inteligente</h1>
+  <p style="margin-top:18px;max-width:60ch">Um montador de rotina que gera <b>cenários comparáveis com trade-offs</b>,
+  <b>replaneja quando a vida atropela</b> e <b>aprende com cada escolha</b> — sobre o solver que já garante que tudo cabe antes dos prazos.</p>
+  <p style="margin-top:26px" class="mono" style="font-size:12px">visão consolidada · backend C1–C4 planejado · frontend F1–F4 (este handoff)</p>
+</section>
+
+<section class="slide">
+  <div class="kicker">O problema</div>
+  <h2>Planejar de novo, toda semana, é trabalho</h2>
+  <ul>
+    <li>Tarefas com prazo + rotina fixa (aula, academia, estágio) disputam as mesmas horas — <b>encaixar é um quebra-cabeça repetitivo</b>.</li>
+    <li>O plano "ideal" depende de gosto: tem quem prefira <b>dias intensos e sábado livre</b>; tem quem prefira <b>tudo espalhado e leve</b>.</li>
+    <li>E o plano morre no primeiro imprevisto — <b>refazer na mão é o maior custo</b>.</li>
+  </ul>
+  <div class="quote"><p>A resposta não é <i>um</i> plano ótimo — é <b>opções com trade-offs claros</b>, e um sistema que aprende qual você escolhe.</p></div>
+</section>
+
+<section class="slide">
+  <div class="kicker">Arquitetura</div>
+  <h2>Por que a IA não monta o plano</h2>
+  <div class="cols">
+    <div>
+      <p>LLMs erram aritmética de minutos, sobrepõem eventos e alucinam datas. Scheduling é otimização — <b>código exato resolve em milissegundos</b>.</p>
+      <p style="margin-top:14px">Então cada camada faz só o que faz bem — e <b>todo número que chega à tela vem do código</b>, nunca da IA.</p>
+    </div>
+    <div class="stack">
+      <div class="layer"><h4>Conversa <span class="pill">futuro</span></h4><p>agente com ferramentas: criar tarefa, simular "e se…", disparar cenários</p></div>
+      <div class="layer hl"><h4>Intenção — a IA propõe</h4><p>cenários candidatos (diretrizes de alto nível), validados por guarda-corpo</p></div>
+      <div class="layer"><h4>Verdade — determinística</h4><p>solver puro + métricas + filtros: planos <b>válidos por construção</b></p></div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="kicker">Como funciona</div>
+  <h2>Cenários: a IA propõe, o solver prova</h2>
+  <div class="flow">
+    <div class="step"><span class="n">1</span><span class="who code">CÓDIGO</span><p>solver monta o <b>plano base</b> + fatos da semana (picos, folgas, prazos)</p></div>
+    <div class="step"><span class="n">2</span><span class="who ia">IA</span><p>propõe 3–6 cenários (<i>"quinta até 20h libera o sábado"</i>) — só diretrizes, nunca horários</p></div>
+    <div class="step"><span class="n">3</span><span class="who code">CÓDIGO</span><p>guarda-corpo valida · solver roda <b>todos</b> (ms cada) · métricas objetivas por cenário</p></div>
+    <div class="step"><span class="n">4</span><span class="who code">CÓDIGO</span><p>filtro de dominância mata os ruins · <b>score</b> ordena os sobreviventes</p></div>
+    <div class="step"><span class="n">5</span><span class="who code">CÓDIGO</span><p>usuário vê <b>até 4 cards</b> (base + sugerido + contrariante) e aplica um</p></div>
+  </div>
+  <p style="margin-top:16px">Proposta ruim da IA custa milissegundos e morre no filtro — <b>o usuário nunca vê</b>. IA offline? Os arquétipos de código garantem cenários sempre.</p>
+</section>
+
+<section class="slide">
+  <div class="kicker">A tela central · wireframe W3</div>
+  <h2>Escolher rotina vira comparar 4 cards</h2>
+  <ul>
+    <li>Cada card: nome, intenção, <b>mini-mapa da semana</b>, métricas em mono com <b>delta vs. base</b> (<span class="tag-ok">▲ melhora</span> · <span class="tag-cost">▲ custo</span> — nunca vermelho: trade-off não é erro).</li>
+    <li>Badge violeta <b>"Sugerido"</b> no maior score, pré-selecionado; card <b>Base</b> sempre presente como referência.</li>
+    <li>Selecionar (sem aplicar) mostra <b>preview ghost</b> das sessões no calendário; aplicar persiste e as sessões viram eventos reais.</li>
+    <li>O que não coube aparece como alerta âmbar no card — escolher assim mesmo é permitido.</li>
+  </ul>
+</section>
+
+<section class="slide">
+  <div class="kicker">Aprendizado</div>
+  <h2>O "Sugerido" fica com a sua cara</h2>
+  <div class="cols">
+    <div>
+      <p><b>Escolha revelada:</b> cada escolha de cenário é um voto nas métricas em que ele se destaca. Os <b>pesos</b> do score se movem devagar (EWMA) na direção do que você escolhe.</p>
+      <p style="margin-top:14px">Semana após semana, o cenário sugerido converge para o seu gosto — <b>sem nunca perguntar</b>.</p>
+    </div>
+    <div>
+      <p><b>Guarda-corpos:</b></p>
+      <ul>
+        <li>score <b>ordena, não filtra</b> — sempre há um card "contrariante" (evita bolha)</li>
+        <li>pesos com piso, teto e <b>decaimento ao neutro</b> (gostos mudam com o semestre)</li>
+        <li>escolha <b>crua</b> gravada — dá para trocar o algoritmo e recalcular tudo</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="kicker">Resiliência · wireframe W4</div>
+  <h2>Replanejar a partir de agora</h2>
+  <ul>
+    <li>Emergência, prova que atrasou, cansaço: <b>um clique</b> recalcula só o futuro — passado e concluídos ficam intocados.</li>
+    <li>Antes de aplicar, um <b>diff legível</b>: <i>"Cálculo: qua → qui · sábado ganhou 1h"</i> + o custo em métricas.</li>
+    <li>Atalho <b>"Hoje não"</b>: esvazia o dia e mostra o preço (<i>"nada atrasa"</i> ou <i>"quinta fica com 5h"</i>).</li>
+    <li>Sem IA no caminho: síncrono, instantâneo, sempre disponível.</li>
+  </ul>
+</section>
+
+<section class="slide">
+  <div class="kicker">Adaptação · wireframe W5</div>
+  <h2>Aprender quanto as coisas levam de verdade</h2>
+  <ul>
+    <li>Ao concluir: <b>"quanto levou?"</b> — opcional, pré-preenchido, nunca bloqueia.</li>
+    <li>Estatística simples por classe: <i>"Cálculo costuma levar <b>1.3×</b> o que você estima"</i> → o solver passa a reservar o tempo real.</li>
+    <li>Classes muito remarcadas são <b>elásticas</b> → viram o amortecedor preferido do replanejamento; as rígidas (aula, estágio) ficam intocadas.</li>
+    <li>Tudo transparente: o fator aparece na UI, explicável em uma frase.</li>
+  </ul>
+</section>
+
+<section class="slide">
+  <div class="kicker">Futuro · wireframe W6</div>
+  <h2>Um agente para conversar com a rotina</h2>
+  <div class="cols">
+    <div>
+      <ul>
+        <li><i>"adiciona o trabalho de Física 2, 4h, pra sexta"</i> → cria no Inbox</li>
+        <li><i>"e se eu estudar Cálculo na quinta?"</i> → <b>simula de verdade</b> (solver puro) e desenha o preview — o agente nunca "acha", ele roda</li>
+        <li>escrever no calendário <b>sempre</b> pede confirmação explícita</li>
+      </ul>
+    </div>
+    <div>
+      <p>O backend expõe um <b>servidor MCP</b> — o runtime do agente (Claude, Hermes, …) é trocável; a camada de ferramentas é o investimento durável.</p>
+      <p style="margin-top:12px">Notion/Google Calendar entram como <b>views sincronizadas</b> do plano aplicado — nunca fonte de verdade.</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="kicker">Roadmap</div>
+  <h2>Frontend F1–F4 × Backend C1–C4</h2>
+  <table>
+    <tr><th>front</th><th>entrega</th><th>depende de</th></tr>
+    <tr><td>F1</td><td>fluxo de cenários (W1 + W2 + W3) — pode nascer com mocks</td><td>backend C1a + C1b</td></tr>
+    <tr><td>F2</td><td>replanejar + "Hoje não" (W4)</td><td>backend C2</td></tr>
+    <tr><td>F3</td><td>tempo real no concluir (W5) — mudança pequena</td><td>backend C3</td></tr>
+    <tr><td>F4</td><td>painel do agente (W6)</td><td>backend C4 (MCP)</td></tr>
+  </table>
+  <p style="margin-top:18px">Contratos de API, estados e regras de design: <b>HANDOFF.md</b>. Telas anotadas: <b>wireframes.html</b>. Plano do backend: <span class="mono" style="font-size:13px">docs/tasks/rotina-inteligente-implementacao.md</span> (repo backend).</p>
+</section>
+
+<div class="bar" id="bar"></div>
+<div class="hint">← → ou espaço</div>
+<div class="hud" id="hud"></div>
+<script>
+const S=[...document.querySelectorAll('.slide')];let i=0;
+function go(n){i=Math.max(0,Math.min(S.length-1,n));S.forEach((s,k)=>s.classList.toggle('on',k===i));
+hud.textContent=(i+1)+' / '+S.length;bar.style.width=((i+1)/S.length*100)+'%';}
+addEventListener('keydown',e=>{if(['ArrowRight','PageDown',' '].includes(e.key))go(i+1);
+if(['ArrowLeft','PageUp'].includes(e.key))go(i-1);if(e.key==='Home')go(0);if(e.key==='End')go(S.length-1);});
+addEventListener('click',e=>{if(!e.target.closest('a'))go(i+1)});go(0);
+</script>
+</body>
+</html>
