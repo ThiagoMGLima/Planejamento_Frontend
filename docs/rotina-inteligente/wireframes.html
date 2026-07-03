@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wireframes — Rotina Inteligente</title>
+<style>
+/* Tokens espelhados de src/styles/tokens.css (subconjunto usado aqui). */
+:root{
+  --font-ui:'Hanken Grotesk',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --font-mono:'IBM Plex Mono',ui-monospace,'SFMono-Regular',Menlo,monospace;
+  --ui:#5b4f9e; --ui-strong:#453a80; --ui-tint:#efedf8; --ui-border:#cdc7e8;
+  --pend:#ba7517; --pend-bg:#faf2db; --pend-tx:#8a661c;
+  --done:#3b6d11; --done-bg:#ecf4df; --crit:#a32d2d;
+  --ink:#1d1d22; --slate:#56565f; --muted:#9a9aa2;
+  --paper:#fff; --page:#f6f6f8; --sidebar:#eeeef1;
+  --hairline:#e6e6ea; --hairline-strong:#dcdce2; --grid-line:#edeef1;
+  --estudar-bg:#ecf4df; --estudar-st:#b9d795; --estudar-tx:#3b6d11;
+  --prova-bg:#fbeaea;   --prova-st:#e0b0b0;   --prova-tx:#a32d2d;
+  --trabalho-bg:#e1f5ee;--trabalho-st:#9fe1cb;--trabalho-tx:#0f6e56;
+  --aula-bg:#e6f1fb;    --aula-st:#9cc4e8;    --aula-tx:#185fa5;
+}
+*{box-sizing:border-box;margin:0}
+body{font-family:var(--font-ui);background:var(--page);color:var(--ink);padding:32px 16px 96px;line-height:1.45}
+.mono{font-family:var(--font-mono)}
+.wrap{max-width:1060px;margin:0 auto}
+h1{font-size:27px;font-weight:600;letter-spacing:-.02em}
+.lead{color:var(--slate);font-size:14px;margin:6px 0 40px;max-width:70ch}
+.wf{margin:0 0 56px}
+.wf>h2{font-size:16px;font-weight:600;margin-bottom:2px}
+.wf>h2 .tag{font-family:var(--font-mono);font-size:10px;color:var(--ui);background:var(--ui-tint);border:1px solid var(--ui-border);border-radius:4px;padding:1px 6px;vertical-align:2px;margin-right:8px}
+.wf>.sub{font-size:13px;color:var(--slate);margin-bottom:14px;max-width:78ch}
+.screen{background:var(--paper);border:1px solid var(--hairline-strong);border-radius:10px;box-shadow:0 1px 3px rgba(29,29,34,.06);overflow-x:auto}
+.notes{font-size:12px;color:var(--slate);margin-top:10px;display:grid;gap:4px}
+.notes b{color:var(--ui-strong)}
+.dot{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;background:var(--ui);color:#fff;font:600 10px var(--font-mono);vertical-align:1px;margin-right:6px;flex:none}
+.dot.abs{position:absolute;z-index:3}
+/* shell genérico */
+.topbar{height:44px;display:flex;align-items:center;gap:12px;padding:0 14px;border-bottom:1px solid var(--hairline)}
+.brand{font-weight:600;font-size:14px}
+.tb-sp{flex:1}
+.chip{font-size:12px;color:var(--slate);border:1px solid var(--hairline-strong);border-radius:6px;padding:4px 10px;background:var(--paper)}
+.btn{font-size:12.5px;font-weight:600;border-radius:6px;padding:5px 12px;border:1px solid var(--hairline-strong);background:var(--paper);color:var(--ink)}
+.btn.primary{background:var(--ui);border-color:var(--ui);color:#fff}
+.btn.ghosty{color:var(--ui-strong);border-color:var(--ui-border);background:var(--ui-tint)}
+.ph{background:repeating-linear-gradient(45deg,#f1f1f4 0 6px,#fafafb 6px 12px);border:1px dashed var(--hairline-strong);border-radius:6px;color:var(--muted);display:flex;align-items:center;justify-content:center;font-size:11px}
+/* W1 */
+.shell{display:grid;grid-template-columns:210px 1fr;min-height:290px}
+.sb{background:var(--sidebar);border-right:1px solid var(--hairline);padding:10px}
+.sb h4{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:10px 4px 6px}
+.task{background:var(--paper);border:1px solid var(--hairline);border-left:3px solid var(--estudar-st);border-radius:6px;padding:6px 8px;font-size:12px;margin-bottom:6px;position:relative}
+.task .meta{font-family:var(--font-mono);font-size:9.5px;color:var(--muted);display:block;margin-top:2px}
+.task input{accent-color:var(--ui);float:right}
+.task.off{opacity:.55;border-left-color:var(--hairline-strong)}
+.task.off .why{font-size:10px;color:var(--pend-tx);background:var(--pend-bg);border-radius:4px;padding:1px 5px;display:inline-block;margin-top:3px}
+.selbar{position:relative;margin:12px;border:1px solid var(--ui-border);background:var(--ui-tint);border-radius:8px;padding:10px 12px;display:flex;align-items:center;gap:12px;font-size:12.5px;color:var(--ui-strong)}
+/* W2 */
+.center{min-height:230px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:28px;position:relative}
+.bar{width:320px;height:6px;background:var(--ui-tint);border-radius:4px;overflow:hidden}
+.bar i{display:block;width:45%;height:100%;background:var(--ui);border-radius:4px}
+/* W3 */
+.cmp{padding:14px;position:relative}
+.cmp-h{display:flex;align-items:baseline;gap:10px;margin-bottom:12px}
+.cards{display:grid;grid-template-columns:repeat(4,minmax(190px,1fr));gap:10px;min-width:820px}
+.card{border:1px solid var(--hairline-strong);border-radius:8px;padding:10px;position:relative;background:var(--paper)}
+.card.sel{border-color:var(--ui);box-shadow:0 0 0 2px var(--ui-tint)}
+.badge{position:absolute;top:-9px;left:10px;background:var(--ui);color:#fff;font:600 9.5px var(--font-mono);padding:2px 7px;border-radius:4px;letter-spacing:.04em}
+.badge.alt{background:var(--paper);color:var(--muted);border:1px solid var(--hairline-strong)}
+.card h5{font-size:13px;font-weight:600;margin:4px 0 1px}
+.card .int{font-size:11px;color:var(--slate);min-height:28px}
+.mini{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin:8px 0;align-items:end;height:34px}
+.mini i{background:var(--ui);opacity:.9;border-radius:2px;display:block}
+.mini i.z{background:var(--ui-tint)}
+.mini+small{display:flex;justify-content:space-between;font-family:var(--font-mono);font-size:8.5px;color:var(--muted)}
+.met{font-family:var(--font-mono);font-size:10px;display:grid;gap:3px;margin:8px 0;color:var(--slate)}
+.met b{color:var(--ink);font-weight:500}
+.up{color:var(--done)} .dn{color:var(--pend-tx)}
+.tos{font-size:11px;color:var(--slate);padding-left:14px;margin:6px 0;display:grid;gap:2px}
+.warn{font-size:10.5px;color:var(--pend-tx);background:var(--pend-bg);border-radius:4px;padding:3px 6px;margin:6px 0}
+.iaoff{font-size:11px;color:var(--slate);border:1px solid var(--hairline);border-radius:6px;padding:4px 10px;background:var(--page)}
+/* W4 */
+.diff{padding:16px;display:grid;grid-template-columns:1fr 300px;gap:16px;min-height:250px;position:relative}
+.dl{display:grid;gap:6px;align-content:start}
+.drow{display:flex;align-items:center;gap:8px;font-size:12.5px;border:1px solid var(--hairline);border-radius:6px;padding:7px 10px}
+.drow .k{font:600 9px var(--font-mono);padding:2px 6px;border-radius:4px;flex:none}
+.k.mov{background:var(--ui-tint);color:var(--ui-strong)}
+.k.new{background:var(--done-bg);color:var(--done)}
+.k.rem{background:var(--pend-bg);color:var(--pend-tx)}
+.drow .mono{font-size:10px;color:var(--slate)}
+/* W5 */
+.dlg-wrap{min-height:230px;display:flex;align-items:center;justify-content:center;background:repeating-linear-gradient(45deg,#f4f4f6 0 8px,#fbfbfc 8px 16px);position:relative}
+.dlg{width:330px;background:var(--paper);border:1px solid var(--hairline-strong);border-radius:10px;box-shadow:0 8px 24px rgba(29,29,34,.12);padding:16px}
+.dlg h5{font-size:14px;font-weight:600}
+.dlg .ev{font-size:12px;color:var(--slate);border-left:3px solid var(--estudar-st);background:var(--estudar-bg);border-radius:4px;padding:5px 8px;margin:8px 0}
+.field{display:flex;align-items:center;gap:8px;margin:12px 0;font-size:12.5px}
+.field input{font-family:var(--font-mono);font-size:13px;width:70px;padding:5px 8px;border:1px solid var(--hairline-strong);border-radius:6px;text-align:right}
+.dlg-a{display:flex;gap:8px;justify-content:flex-end;margin-top:6px}
+.linkish{font-size:12px;color:var(--muted);background:none;border:none;text-decoration:underline}
+/* W6 */
+.chat{display:grid;grid-template-columns:1fr 320px;min-height:300px}
+.cal-ph{margin:14px;position:relative}
+.pane{border-left:1px solid var(--hairline);display:flex;flex-direction:column}
+.pane h5{font-size:13px;font-weight:600;padding:10px 12px;border-bottom:1px solid var(--hairline)}
+.msgs{flex:1;padding:12px;display:grid;gap:8px;align-content:start;font-size:12px}
+.m-u{justify-self:end;background:var(--ui-tint);color:var(--ui-strong);border-radius:10px 10px 2px 10px;padding:7px 10px;max-width:85%}
+.m-a{justify-self:start;background:var(--page);border:1px solid var(--hairline);border-radius:10px 10px 10px 2px;padding:7px 10px;max-width:90%}
+.m-a .mono{font-size:10px;color:var(--slate);display:block;margin-top:4px}
+.chips{display:flex;gap:6px;padding:0 12px 8px;flex-wrap:wrap}
+.chips .chip{font-size:11px;padding:3px 8px;color:var(--ui-strong);border-color:var(--ui-border);background:var(--ui-tint)}
+.inp{margin:0 12px 12px;border:1px solid var(--hairline-strong);border-radius:8px;padding:8px 10px;font-size:12px;color:var(--muted)}
+footer{margin-top:40px;font-size:11px;color:var(--muted)}
+</style>
+</head>
+<body><div class="wrap">
+<h1>Wireframes — Rotina Inteligente</h1>
+<p class="lead">Baixa fidelidade, tokens do design system real (violeta = UI; cor = classe; mono = números).
+Contratos, estados e ordem de construção estão no <b>HANDOFF.md</b> ao lado. Anotações numeradas abaixo de cada tela.</p>
+
+<!-- ============================== W1 ============================== -->
+<section class="wf">
+  <h2><span class="tag">W1</span>Entrada: botão Planejar + seleção de tarefas</h2>
+  <p class="sub">O fluxo nasce na topbar do shell existente. A seleção acontece no próprio Inbox, em "modo planejar".</p>
+  <div class="screen">
+    <div class="topbar">
+      <span class="brand">Planejador</span><span class="chip">Dia · <b>Semana</b> · Mês</span>
+      <span class="tb-sp"></span>
+      <button class="btn">Replanejar ⟳</button>
+      <button class="btn primary" style="position:relative">Planejar ▸<span class="dot abs" style="top:-8px;right:-8px">1</span></button>
+    </div>
+    <div class="shell">
+      <div class="sb">
+        <h4>Inbox — selecionar p/ plano</h4>
+        <div class="task"><input type="checkbox" checked>Trabalho de Física 2<span class="meta">prazo 11/07 · 240min · Estudar</span></div>
+        <div class="task" style="border-left-color:var(--prova-st)"><input type="checkbox" checked>Estudar p/ prova de Cálculo<span class="meta">prazo 14/07 · 300min · Prova</span></div>
+        <div class="task" style="border-left-color:var(--trabalho-st)"><input type="checkbox">Relatório do estágio<span class="meta">prazo 18/07 · 120min · Trabalho</span></div>
+        <div class="task off" style="position:relative"><span class="dot abs" style="top:-6px;left:-6px">2</span>Organizar bibliografia<span class="meta">sem esforço estimado</span><span class="why">incompleta — completar ›</span></div>
+      </div>
+      <div style="display:flex;flex-direction:column">
+        <div class="ph" style="flex:1;margin:12px 12px 0">calendário (semana) — inalterado</div>
+        <div class="selbar"><span class="dot">3</span><b>2 tarefas</b> · 540 min ·
+          <span>horizonte:</span><span class="chip" style="background:var(--paper)">Automático ▾</span>
+          <span class="tb-sp"></span><button class="btn primary">Gerar cenários</button></div>
+      </div>
+    </div>
+  </div>
+  <div class="notes">
+    <span><span class="dot">1</span>Ação primária nova na topbar; ao lado, <b>Replanejar</b> (W4) — sempre visíveis.</span>
+    <span><span class="dot">2</span>Tarefa sem deadline/esforço/classe fica desabilitada com o motivo inline e link que abre o painel dela (contrato 400/422 nunca deveria acontecer vindo daqui).</span>
+    <span><span class="dot">3</span>Barra de resumo com horizonte (AUTOMATICO/SEMANA/DUAS_SEMANAS/MES) e o CTA que faz <span class="mono">POST /planejamento/cenarios</span>.</span>
+  </div>
+</section>
+
+<!-- ============================== W2 ============================== -->
+<section class="wf">
+  <h2><span class="tag">W2</span>Espera da geração (202 + polling)</h2>
+  <p class="sub">IA local em CPU: dezenas de segundos. Barra honesta com <span class="mono">tempo_estimado_s</span>. Cache hit (200 direto) pula esta tela.</p>
+  <div class="screen">
+    <div class="center">
+      <span class="dot abs" style="top:12px;left:12px">1</span>
+      <div style="font-size:14px;font-weight:600">Montando seus cenários…</div>
+      <div class="bar"><i></i></div>
+      <div class="mono" style="font-size:11px;color:var(--slate)">~40s · analisando 2 tarefas e a agenda até 14/07</div>
+      <div style="font-size:11px;color:var(--muted)">a IA propõe alternativas; o solver garante que tudo cabe antes dos prazos</div>
+      <button class="linkish">cancelar</button>
+    </div>
+  </div>
+  <div class="notes"><span><span class="dot">1</span>Polling <span class="mono">GET /planejamento/cenarios/{job_id}</span> a cada ~2s (mesmo padrão do planejar-ia). Não bloquear o app: pode virar um toast/estado na topbar se o usuário navegar.</span></div>
+</section>
+
+<!-- ============================== W3 ============================== -->
+<section class="wf">
+  <h2><span class="tag">W3</span>Comparação de cenários — a tela central</h2>
+  <p class="sub">Máx. 4 cards. "Base" sempre presente (referência dos deltas). Maior score = badge "Sugerido", pré-selecionado. Selecionar mostra preview ghost no calendário; Aplicar confirma.</p>
+  <div class="screen"><div class="cmp">
+    <div class="cmp-h"><b style="font-size:15px">Escolha sua rotina</b>
+      <span style="font-size:12px;color:var(--slate)">2 tarefas · até 14/07</span>
+      <span class="tb-sp" style="flex:1"></span>
+      <span class="iaoff" style="position:relative"><span class="dot abs" style="top:-9px;right:-9px">5</span>⚠ cenários padrão — IA offline</span></div>
+    <div class="cards">
+      <div class="card"><span class="badge alt">BASE</span>
+        <h5>Plano base</h5><div class="int">Suas preferências, sem ajustes.</div>
+        <div class="mini"><i style="height:60%"></i><i style="height:90%"></i><i style="height:100%"></i><i style="height:85%"></i><i style="height:70%"></i><i class="z" style="height:12%"></i><i style="height:45%"></i></div><small><span>S</span><span>T</span><span>Q</span><span>Q</span><span>S</span><span>S</span><span>D</span></small>
+        <div class="met"><span>pico/dia <b>5h30</b></span><span>dias livres <b>1</b></span><span>folga média <b>0.5d</b></span><span>fora da janela <b>0min</b></span></div>
+      </div>
+      <div class="card sel" style="position:relative"><span class="badge">SUGERIDO ★</span><span class="dot abs" style="top:-9px;right:-9px">1</span>
+        <h5>Quinta estendida</h5><div class="int">Ir até 20h na quinta libera o fim de semana inteiro.</div>
+        <div class="mini"><i style="height:65%"></i><i style="height:80%"></i><i style="height:75%"></i><i style="height:100%"></i><i style="height:60%"></i><i class="z" style="height:12%"></i><i class="z" style="height:12%"></i></div><small><span>S</span><span>T</span><span>Q</span><span>Q</span><span>S</span><span>S</span><span>D</span></small>
+        <div class="met" style="position:relative"><span class="dot abs" style="top:-2px;right:0">2</span>
+          <span>pico/dia <b>4h45</b> <span class="dn">▲45min qui</span></span>
+          <span>dias livres <b>2</b> <span class="up">▲ sáb+dom</span></span>
+          <span>folga média <b>1.2d</b> <span class="up">▲0.7d</span></span>
+          <span>fora da janela <b>120min</b> <span class="dn">▲2h</span></span></div>
+        <ul class="tos"><li>Sábado e domingo ficam livres</li><li>Quinta vai até 20h (2h além da janela)</li></ul>
+        <button class="btn primary" style="width:100%">Aplicar este</button>
+      </div>
+      <div class="card">
+        <h5>Espalhado</h5><div class="int">Sessões menores, dias mais parecidos entre si.</div>
+        <div class="mini"><i style="height:55%"></i><i style="height:60%"></i><i style="height:58%"></i><i style="height:62%"></i><i style="height:55%"></i><i style="height:40%"></i><i class="z" style="height:12%"></i></div><small><span>S</span><span>T</span><span>Q</span><span>Q</span><span>S</span><span>S</span><span>D</span></small>
+        <div class="met"><span>pico/dia <b>3h00</b> <span class="up">▼2h30</span></span><span>dias livres <b>1</b> <span class="dn">= </span></span><span>folga média <b>0.4d</b> <span class="dn">▼0.1d</span></span><span>fora da janela <b>0min</b></span></div>
+        <ul class="tos"><li>Nenhum dia pesado</li><li>Usa o sábado de manhã</li></ul>
+        <button class="btn">Aplicar este</button>
+      </div>
+      <div class="card" style="position:relative"><span class="dot abs" style="top:-9px;right:-9px">3</span>
+        <h5>Tudo antes</h5><div class="int">Termina tudo 2 dias antes dos prazos.</div>
+        <div class="mini"><i style="height:100%"></i><i style="height:95%"></i><i style="height:80%"></i><i style="height:30%"></i><i class="z" style="height:12%"></i><i class="z" style="height:12%"></i><i class="z" style="height:12%"></i></div><small><span>S</span><span>T</span><span>Q</span><span>Q</span><span>S</span><span>S</span><span>D</span></small>
+        <div class="met"><span>pico/dia <b>6h15</b> <span class="dn">▲45min</span></span><span>dias livres <b>3</b> <span class="up">▲2</span></span><span>folga média <b>2.1d</b> <span class="up">▲1.6d</span></span><span>fora da janela <b>0min</b></span></div>
+        <div class="warn" style="position:relative"><span class="dot abs" style="top:-8px;left:-8px">4</span>não coube: 40min de Relatório</div>
+        <button class="btn">Aplicar este</button>
+      </div>
+    </div>
+  </div></div>
+  <div class="notes">
+    <span><span class="dot">1</span>Badge e seleção em violeta (UI). Ao selecionar (sem aplicar), o calendário atrás mostra as sessões em "ghost" (opacidade reduzida, cor da classe).</span>
+    <span><span class="dot">2</span>Deltas vs. base: verde <span class="mono">--done</span> = melhora, âmbar <span class="mono">--pend</span> = custo. Nunca vermelho — trade-off não é erro. Números sempre mono.</span>
+    <span><span class="dot">3</span>O "contrariante" (forte na métrica de menor peso) sempre aparece — evita bolha de preferência.</span>
+    <span><span class="dot">4</span><span class="mono">nao_alocado</span> não vazio ⇒ alerta âmbar no card; escolher assim mesmo é permitido.</span>
+    <span><span class="dot">5</span><span class="mono">ia_indisponivel: true</span> ⇒ aviso discreto, fluxo idêntico (arquétipos sempre vêm). Confirmar escolha SEMPRE chama <span class="mono">/cenarios/escolher</span> — é o que ensina o sistema.</span>
+  </div>
+</section>
+
+<!-- ============================== W4 ============================== -->
+<section class="wf">
+  <h2><span class="tag">W4</span>Replanejar a partir de agora — diff antes de aplicar</h2>
+  <p class="sub">Emergência ou cansaço: simulação instantânea (sem IA), diff legível, aplicar é opcional. "Hoje não" = atalho com <span class="mono">dias_bloqueados=[hoje]</span>.</p>
+  <div class="screen"><div class="diff">
+    <div class="dl">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px"><b style="font-size:14px">O que muda</b>
+        <span class="chip" style="position:relative">Hoje não 😮‍💨<span class="dot abs" style="top:-8px;right:-8px">1</span></span></div>
+      <div class="drow"><span class="k mov">MOVIDA</span>Estudar Cálculo <span class="mono">qua 19:00 → qui 09:00</span></div>
+      <div class="drow"><span class="k mov">MOVIDA</span>Física 2 — parte 2 <span class="mono">hoje 20:00 → sex 14:00</span></div>
+      <div class="drow"><span class="k new">NOVA</span>Física 2 — parte 3 <span class="mono">sáb 10:00 · 60min</span></div>
+      <div class="drow"><span class="k rem">REMOVIDA</span>Sessão de revisão <span class="mono">hoje 21:00</span></div>
+      <div style="font-size:11px;color:var(--muted)">4 sessões inalteradas</div>
+    </div>
+    <div style="display:grid;gap:8px;align-content:start;position:relative"><span class="dot abs" style="top:-6px;right:0">2</span>
+      <b style="font-size:13px">Custo da mudança</b>
+      <div class="met" style="border:1px solid var(--hairline);border-radius:8px;padding:10px">
+        <span>prazos <b class="up">todos ok ✓</b></span>
+        <span>pico/dia <b>4h30</b> <span class="dn">▲1h (qui)</span></span>
+        <span>sábado <b>60min usados</b> <span class="dn">antes livre</span></span></div>
+      <button class="btn primary">Aplicar replanejamento</button>
+      <button class="btn">Descartar</button>
+    </div>
+  </div></div>
+  <div class="notes">
+    <span><span class="dot">1</span>Atalho de um clique para o caso "não vou conseguir hoje". Diff vazio ⇒ não abrir a tela ("nada muda").</span>
+    <span><span class="dot">2</span>Simulação = <span class="mono">POST /replanejar</span>; Aplicar = <span class="mono">POST /replanejar/aplicar</span> (recalcula no servidor — nunca envie o plano de volta).</span>
+  </div>
+</section>
+
+<!-- ============================== W5 ============================== -->
+<section class="wf">
+  <h2><span class="tag">W5</span>Concluir com tempo real (alimenta o aprendizado)</h2>
+  <p class="sub">Um campo a mais no dialog de concluir que já existe. Opcional SEMPRE — nunca bloquear a conclusão.</p>
+  <div class="screen"><div class="dlg-wrap">
+    <div class="dlg">
+      <h5>Concluir sessão</h5>
+      <div class="ev">Estudar p/ prova de Cálculo · <span class="mono">qui 09:00–10:30</span></div>
+      <div class="field" style="position:relative"><span class="dot abs" style="top:-8px;left:-8px">1</span>
+        Quanto levou? <input class="mono" value="90"> min</div>
+      <div class="dlg-a"><button class="linkish">pular</button><button class="btn primary">Concluir ✓</button></div>
+    </div>
+  </div></div>
+  <div class="notes"><span><span class="dot">1</span>Pré-preenchido com o planejado; <span class="mono">{"real_min": 90}</span> vai no concluir existente. É o que ensina "Cálculo leva 1.3× o que você estima" — mostrar esse fator depois, no card da classe (transparência).</span></div>
+</section>
+
+<!-- ============================== W6 ============================== -->
+<section class="wf">
+  <h2><span class="tag">W6</span>Agente conversacional (fase futura — direção, não requisito)</h2>
+  <p class="sub">Painel lateral na largura padrão (<span class="mono">--panel-w</span>). Existe aqui para que W1–W5 não bloqueiem esse layout depois.</p>
+  <div class="screen"><div class="chat">
+    <div class="cal-ph"><div class="ph" style="height:100%;min-height:250px">calendário — sessões propostas em ghost enquanto o agente simula</div><span class="dot abs" style="top:8px;right:8px">2</span></div>
+    <div class="pane">
+      <h5>Assistente</h5>
+      <div class="msgs">
+        <div class="m-u">adiciona o trabalho de física 2, uns 240min, pra sexta</div>
+        <div class="m-a">Criei <b>Trabalho de Física 2</b> no Inbox (240min · prazo sex 11/07 · Estudar). Quer que eu já monte cenários?</div>
+        <div class="m-u">e se eu estudar cálculo na quinta em vez de quarta?</div>
+        <div class="m-a">Cabe sem atrasar nada. Quinta fica com 4h30 (era 3h) e quarta libera a noite.<span class="mono">simulado agora — nada foi alterado</span></div>
+      </div>
+      <div class="chips" style="position:relative"><span class="dot abs" style="top:-8px;left:6px">1</span>
+        <span class="chip">Aplicar mudança</span><span class="chip">Gerar cenários</span><span class="chip">Descartar</span></div>
+      <div class="inp">pergunte ou peça algo…</div>
+    </div>
+  </div></div>
+  <div class="notes">
+    <span><span class="dot">1</span>Toda ação de escrita vira um chip de confirmação explícita — o agente simula livre (<span class="mono">simular_plano</span> é puro), mas só persiste com clique.</span>
+    <span><span class="dot">2</span>Respostas what-if renderizam preview ghost no calendário: o texto do agente e o desenho vêm do MESMO resultado do solver (nunca deixar o agente "descrever" sem simular).</span>
+  </div>
+</section>
+
+<footer>Rotina Inteligente · wireframes v1 · pares com HANDOFF.md e slides.html · tokens espelhados de src/styles/tokens.css</footer>
+</div></body>
+</html>
