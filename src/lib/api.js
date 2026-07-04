@@ -169,6 +169,15 @@ export const api = {
     // POST (mesmo corpo) → {diff, eventos_criados, eventos_removidos, ...}
     replanejarAplicar: (body, opts) =>
       request('/planejamento/replanejar/aplicar', { method: 'POST', body, ...opts }),
+
+    // Agente conversacional (Marco C4, o cérebro).
+    // POST {conversa_id, mensagem, contexto?} → 202 {job_id, status, tempo_estimado_s}
+    agenteChat: (body, opts) =>
+      request('/planejamento/agente/chat', { method: 'POST', body, ...opts }),
+    // GET → {status:'processando'|'pronto'|'erro',
+    //        resultado?: {resposta, acoes, mudou_estado, ia_indisponivel}}
+    agenteChatStatus: (jobId, opts) =>
+      request(`/planejamento/agente/chat/${jobId}`, opts),
   },
 }
 
