@@ -2153,6 +2153,18 @@
   color: #fff;
 }
 
+.agente__msg--erro {
+  align-self: flex-start;
+  color: var(--pend-tx);
+  background: var(--pend-bg);
+  border: 1px solid var(--hairline);
+}
+
+.agente__msg--espera {
+  font-style: italic;
+  color: var(--slate);
+}
+
 .agente__sugestoes {
   display: flex;
   flex-wrap: wrap;
