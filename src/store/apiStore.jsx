@@ -165,6 +165,7 @@ export function ApiStoreProvider({ children }) {
         if (dto) setRawEventos((prev) => ({ ...prev, [eventId]: M.eventoFromApi(dto) }))
         setPanel({ type: 'evento', eventId }, instance ? instance.id : eventId, instance)
       },
+      openTarefaPanel: (tarefaId) => setPanel({ type: 'tarefa', tarefaId }),
       openPendingPanel: () => setPanel({ type: 'pendentes' }),
       openConcluir: (instance) => setPanel({ type: 'concluir', instance }, instance.id, instance),
       openAgente: () => setPanel({ type: 'agente' }),

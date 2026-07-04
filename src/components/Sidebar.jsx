@@ -70,6 +70,7 @@ export default function Sidebar() {
                 motivo={motivo}
                 selecionada={plan.estaSelecionada(tarefa.id)}
                 onToggle={plan.toggleTarefa}
+                onClick={() => store.openTarefaPanel(tarefa.id)}
               />
             ))}
           </div>

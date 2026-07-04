@@ -6,6 +6,7 @@ import WeekView from './views/WeekView.jsx'
 import DayView from './views/DayView.jsx'
 import MonthView from './views/MonthView.jsx'
 import EventPanel from './panels/EventPanel.jsx'
+import TarefaPanel from './panels/TarefaPanel.jsx'
 import PendingPanel from './panels/PendingPanel.jsx'
 import ConcluirDialog from './components/ConcluirDialog.jsx'
 import AgentePanel from './components/AgentePanel.jsx'
@@ -42,6 +43,7 @@ export default function App() {
         </main>
 
         {store.panel?.type === 'evento' && <EventPanel eventId={store.panel.eventId} />}
+        {store.panel?.type === 'tarefa' && <TarefaPanel tarefaId={store.panel.tarefaId} />}
         {store.panel?.type === 'pendentes' && <PendingPanel />}
         {store.panel?.type === 'concluir' && <ConcluirDialog instance={store.panel.instance} />}
         {store.panel?.type === 'agente' && <AgentePanel />}
