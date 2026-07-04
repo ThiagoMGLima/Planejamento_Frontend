@@ -30,6 +30,29 @@ export function corClasse(bg) {
   return { bg, st, tx }
 }
 
+/**
+ * Adapta o trio de cor da classe ao tema. No claro, devolve a cor como está;
+ * no escuro, RE-DERIVA a partir do matiz do fundo (`bg`) mantendo a identidade
+ * da classe (mesma hue), mas com fundo escuro, traço médio e texto claro — para
+ * o bloco "ornar" com o dark mode em vez de manter o pastel claro do handoff.
+ *
+ * Funciona para as 5 classes padrão e para classes custom (só depende da hue),
+ * então cobre também cores que o usuário criar.
+ *
+ * @param {{bg:string, st:string, tx:string}} cor  trio no tema claro
+ * @param {'light'|'dark'} theme
+ */
+export function corParaTema(cor, theme) {
+  if (theme !== 'dark' || !cor?.bg) return cor
+  const { h, s } = hexToHsl(cor.bg) ?? { h: 0, s: 0 }
+  // Classes quase-neutras (bege) mantêm baixa saturação e viram cinza escuro.
+  return {
+    bg: hslToHex(h, clamp(s * 0.55), 0.15),
+    st: hslToHex(h, clamp(s * 0.7), 0.34),
+    tx: hslToHex(h, clamp(s * 0.8 + 0.12), 0.72),
+  }
+}
+
 const clamp = (n) => Math.min(1, Math.max(0, n))
 
 /** "#RRGGBB" → { h(0..1), s(0..1), l(0..1) } ou null se inválido. */

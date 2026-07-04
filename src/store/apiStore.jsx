@@ -3,7 +3,16 @@ import { StoreContext } from './store.jsx'
 import { api } from '../lib/api.js'
 import * as M from './mappers.js'
 import { statusEfetivo } from '../lib/status.js'
-import { addDays, addMonths, startOfDay, sameDay, toDateISO, viewWindow } from '../lib/dates.js'
+import {
+  addDays,
+  addMonths,
+  fromDateISO,
+  startOfDay,
+  sameDay,
+  toDateISO,
+  toISO,
+  viewWindow,
+} from '../lib/dates.js'
 
 /**
  * ApiStoreProvider (Marco 4) — implementa A MESMA interface do `useStore`, mas
@@ -34,6 +43,8 @@ export function ApiStoreProvider({ children }) {
   const [pendentesRaw, setPendentesRaw] = useState([])
   const [rawEventos, setRawEventos] = useState({})
   const [error, setError] = useState(null)
+  // Boot da app: 'carregando' → splash; 'pronto' → UI; 'erro' → backend fora.
+  const [boot, setBoot] = useState('carregando')
 
   // Relógio (mantém a derivação visual de PENDENTE fresca entre fetches).
   useEffect(() => {
@@ -88,11 +99,26 @@ export function ApiStoreProvider({ children }) {
     [loadWindow],
   )
 
-  // Carga inicial.
+  // Carga inicial. O /health decide cedo se o backend está de pé (os loads
+  // passam pelo guard, que engole erros — sozinhos não sinalizariam o boot).
   useEffect(() => {
-    loadClasses()
-    loadTarefas()
-    loadPendentes()
+    let vivo = true
+    ;(async () => {
+      try {
+        await api.health()
+      } catch (e) {
+        if (vivo) {
+          setError(e)
+          setBoot('erro')
+        }
+        return
+      }
+      await Promise.all([loadClasses(), loadTarefas(), loadPendentes()])
+      if (vivo) setBoot('pronto')
+    })()
+    return () => {
+      vivo = false
+    }
   }, [loadClasses, loadTarefas, loadPendentes])
 
   // Recarrega a janela quando view/cursor mudam.
@@ -117,6 +143,7 @@ export function ApiStoreProvider({ children }) {
       panel: ui.panel,
       now,
       error,
+      boot,
 
       // navegação / UI
       setView: (view) => setUi((u) => ({ ...u, view })),
@@ -124,7 +151,7 @@ export function ApiStoreProvider({ children }) {
       goToday: () => setUi((u) => ({ ...u, cursorISO: toDateISO(new Date()) })),
       step: (dir) =>
         setUi((u) => {
-          const base = new Date(u.cursorISO)
+          const base = fromDateISO(u.cursorISO)
           const next =
             u.view === 'dia'
               ? addDays(base, dir)
@@ -139,7 +166,15 @@ export function ApiStoreProvider({ children }) {
         setPanel({ type: 'evento', eventId }, instance ? instance.id : eventId, instance)
       },
       openPendingPanel: () => setPanel({ type: 'pendentes' }),
+      openConcluir: (instance) => setPanel({ type: 'concluir', instance }, instance.id, instance),
+      openAgente: () => setPanel({ type: 'agente' }),
       closePanel: () => setPanel(null),
+
+      // Recarrega as fatias afetadas por mutações externas (ex.: aplicar um
+      // cenário / replanejar, que persistem eventos no servidor).
+      recarregar: async () => {
+        await Promise.all([reloadWindow(), loadTarefas(), loadPendentes()])
+      },
 
       // CRUD — Classe
       addClasse: async (c) => {
@@ -205,11 +240,12 @@ export function ApiStoreProvider({ children }) {
       },
 
       // Máquina de estados por instância (escopo conforme recorrência).
-      concluir: async (instance) => {
+      // realMin (opcional, Marco C3): "quanto levou" capturado no dialog W5.
+      concluir: async (instance, realMin) => {
         const params = instance.recorrente
           ? { escopo: 'ocorrencia', data: instance.occDateISO }
           : { escopo: 'serie' }
-        await guard(() => api.eventos.concluir(instance.eventoId, params))
+        await guard(() => api.eventos.concluir(instance.eventoId, { ...params, realMin }))
         setPanel(null)
         await reloadWindow()
         loadPendentes()
@@ -222,6 +258,26 @@ export function ApiStoreProvider({ children }) {
         setPanel(null)
         await Promise.all([loadTarefas(), reloadWindow()])
         loadPendentes()
+      },
+
+      // Mover uma ocorrência de série (modo Editar). O backend ainda NÃO expõe
+      // rota de reposicionar ocorrência (só concluir/remarcar por escopo) e a
+      // expansão é server-side, então gravamos o override otimista no cache do
+      // evento; quando a rota existir, isto vira a chamada HTTP correspondente.
+      moverOcorrencia: async (eventoId, occDateISO, inicio, fim) => {
+        setRawEventos((prev) => {
+          const base = prev[eventoId]
+          if (!base) return prev
+          const ocorrencias = {
+            ...(base.ocorrencias ?? {}),
+            [occDateISO]: {
+              ...(base.ocorrencias?.[occDateISO] ?? {}),
+              movidoInicio: toISO(inicio),
+              movidoFim: toISO(fim),
+            },
+          }
+          return { ...prev, [eventoId]: { ...base, ocorrencias } }
+        })
       },
 
       // leitura / expansão (a partir do cache da janela já buscada)
@@ -256,6 +312,7 @@ export function ApiStoreProvider({ children }) {
     pendentesRaw,
     rawEventos,
     error,
+    boot,
     guard,
     loadClasses,
     loadTarefas,

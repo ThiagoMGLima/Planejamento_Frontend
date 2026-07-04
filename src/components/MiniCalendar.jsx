@@ -4,6 +4,7 @@ import {
   sameDay,
   startOfWeek,
   toDateISO,
+  fromDateISO,
   MONTHS_SHORT,
   WEEKDAYS_SHORT,
 } from '../lib/dates.js'
@@ -15,7 +16,7 @@ import {
  */
 export default function MiniCalendar() {
   const store = useStore()
-  const cursor = new Date(store.cursorISO)
+  const cursor = fromDateISO(store.cursorISO)
   const today = store.now
   const weeks = monthGrid(cursor)
   const cursorWeekStart = startOfWeek(cursor)

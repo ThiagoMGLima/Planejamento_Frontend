@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { corClasse, hexToHsl, hslToHex } from './colors.js'
+import { corClasse, corParaTema, hexToHsl, hslToHex } from './colors.js'
 
 describe('corClasse', () => {
   it('usa o trio EXATO do handoff para as classes padrão', () => {
@@ -24,6 +24,27 @@ describe('corClasse', () => {
     const r = corClasse('lixo')
     expect(r.bg).toBe('lixo')
     expect(r.st).toMatch(/^#[0-9a-f]{6}$/)
+  })
+})
+
+describe('corParaTema', () => {
+  const cor = corClasse('#e6f1fb') // Aula
+
+  it('no tema claro devolve a cor sem alteração', () => {
+    expect(corParaTema(cor, 'light')).toEqual(cor)
+    expect(corParaTema(cor, undefined)).toEqual(cor)
+  })
+
+  it('no escuro escurece o fundo e clareia o texto, preservando a hue', () => {
+    const dark = corParaTema(cor, 'dark')
+    expect(hexToHsl(dark.bg).l).toBeLessThan(0.25) // fundo escuro
+    expect(hexToHsl(dark.tx).l).toBeGreaterThan(0.6) // texto claro
+    // mesma família de cor (hue próxima do fundo claro original)
+    expect(hexToHsl(dark.bg).h).toBeCloseTo(hexToHsl(cor.bg).h, 1)
+  })
+
+  it('tolera cor ausente', () => {
+    expect(corParaTema(undefined, 'dark')).toBeUndefined()
   })
 })
 

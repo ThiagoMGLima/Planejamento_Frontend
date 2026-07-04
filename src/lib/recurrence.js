@@ -47,6 +47,7 @@ export function expandInstances(eventos, { feriados = new Set(), start, end }) {
     }
 
     const dataFim = regra.data_fim ? startOfDay(regra.data_fim) : null
+    // Passo A — ocorrências "naturais" nos dias que casam com a regra.
     for (let day = new Date(s); day <= e; day = addDays(day, 1)) {
       if (dataFim && day > dataFim) break
       if (!ruleMatches(regra, day)) continue
@@ -55,11 +56,26 @@ export function expandInstances(eventos, { feriados = new Set(), start, end }) {
       const fim = atDay(day, evento.fim)
       const dateISO = toDateISO(day)
       const override = evento.ocorrencias?.[dateISO]
+      // Ocorrência REPOSICIONADA (modo Editar): some do dia original; o Passo B a
+      // desenha no destino. Assim mover para outro dia/semana não a duplica.
+      if (override?.movidoInicio) continue
       const status =
         override?.status ?? evento.status ?? (evento.rastrear_conclusao ? 'AGENDADO' : undefined)
       // Ocorrências REMARCADO foram devolvidas ao Inbox; não as mostramos na grade.
       if (status === 'REMARCADO') continue
       out.push(instanceFrom(evento, dateISO, inicio, fim, status))
+    }
+
+    // Passo B — ocorrências movidas cujo DESTINO cai na janela (independe de o
+    // dia original estar na janela: cobre mover para outra semana/mês).
+    for (const [dateISO, ov] of Object.entries(evento.ocorrencias ?? {})) {
+      if (!ov?.movidoInicio) continue
+      const alvo = startOfDay(ov.movidoInicio)
+      if (alvo < s || alvo > e) continue
+      const status =
+        ov.status ?? evento.status ?? (evento.rastrear_conclusao ? 'AGENDADO' : undefined)
+      if (status === 'REMARCADO') continue
+      out.push(instanceFrom(evento, dateISO, ov.movidoInicio, ov.movidoFim ?? ov.movidoInicio, status))
     }
   }
   return out

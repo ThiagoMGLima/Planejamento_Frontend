@@ -126,10 +126,11 @@ export const api = {
       request(`/eventos/${id}/`, { method: 'PUT', body: evento, ...opts }),
     remove: (id, opts) => request(`/eventos/${id}/`, { method: 'DELETE', ...opts }),
     // escopo: 'serie' | 'ocorrencia' (+ data=YYYY-MM-DD p/ ocorrência).
-    concluir: (id, { escopo, data } = {}, opts) =>
+    // realMin (opcional, Marco C3): "quanto levou" — vai no corpo como real_min.
+    concluir: (id, { escopo, data, realMin } = {}, opts) =>
       request(`/eventos/${id}/concluir/`, {
         method: 'POST',
-        body: {},
+        body: realMin != null ? { real_min: realMin } : {},
         params: { escopo, data },
         ...opts,
       }),
@@ -146,6 +147,29 @@ export const api = {
   pendentes: (opts) => request('/pendentes', opts),
   feriados: ({ ano } = {}, opts) => request('/feriados', { params: { ano }, ...opts }),
   health: (opts) => request('/health', opts),
+
+  // ---- Rotina Inteligente (marcos C1b/C2) — rotas avulsas, SEM barra ----
+  planejamento: {
+    // POST → 202 {job_id, status, tempo_estimado_s} | 200 cache-hit {status:'pronto', resultado}
+    cenarios: (body, opts) => request('/planejamento/cenarios', { method: 'POST', body, ...opts }),
+    // GET → {status:'processando'} | {status:'pronto', resultado} | {status:'erro', detalhe}
+    cenariosStatus: (jobId, opts) => request(`/planejamento/cenarios/${jobId}`, opts),
+    // POST {job_id, cenario_id, aplicar} → {aplicado, eventos_criados?<count>, pesos}
+    cenariosEscolher: (body, opts) =>
+      request('/planejamento/cenarios/escolher', { method: 'POST', body, ...opts }),
+    // POST {job_id, cenario_id?, mensagem} → 202 {job_id, status, tempo_estimado_s}
+    cenariosRefinar: (body, opts) =>
+      request('/planejamento/cenarios/refinar', { method: 'POST', body, ...opts }),
+    // GET → {status:'processando'|'pronto'|'erro', resultado?: {resposta, cenario, cenarios, ia_indisponivel}}
+    cenariosRefinarStatus: (jobId, opts) =>
+      request(`/planejamento/cenarios/refinar/${jobId}`, opts),
+    // POST {dias_bloqueados?, preferencias?} → {plano, diff, metricas, metricas_vs_anterior}
+    replanejar: (body, opts) =>
+      request('/planejamento/replanejar', { method: 'POST', body, ...opts }),
+    // POST (mesmo corpo) → {diff, eventos_criados, eventos_removidos, ...}
+    replanejarAplicar: (body, opts) =>
+      request('/planejamento/replanejar/aplicar', { method: 'POST', body, ...opts }),
+  },
 }
 
 export { BASE_URL }
