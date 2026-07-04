@@ -54,11 +54,15 @@ export function tarefaFromApi(dto) {
 }
 
 export function tarefaToApi(model) {
-  const body = { titulo: model.titulo, descricao: model.detalhes ?? '' }
-  if (model.classe) body.classe_id = model.classe
-  if (model.deadline) body.deadline = toApiDateTime(model.deadline)
-  if (model.esforco_estimado != null) body.esforco_estimado = model.esforco_estimado
-  return body
+  // Nulls explícitos: no PATCH de edição, "limpar o campo" precisa chegar ao
+  // servidor como null — omitir o campo deixaria o valor antigo lá.
+  return {
+    titulo: model.titulo,
+    descricao: model.detalhes ?? '',
+    classe_id: model.classe || null,
+    deadline: model.deadline ? toApiDateTime(model.deadline) : null,
+    esforco_estimado: model.esforco_estimado ?? null,
+  }
 }
 
 // ---- Regra de recorrência -------------------------------------------------

@@ -53,7 +53,24 @@ describe('tarefa', () => {
 
   it('toApi usa classe_id e descricao', () => {
     const body = tarefaToApi({ titulo: 'X', classe: 'c1', detalhes: 'nota', esforco_estimado: 60 })
-    expect(body).toEqual({ titulo: 'X', descricao: 'nota', classe_id: 'c1', esforco_estimado: 60 })
+    expect(body).toMatchObject({
+      titulo: 'X',
+      descricao: 'nota',
+      classe_id: 'c1',
+      esforco_estimado: 60,
+    })
+  })
+
+  it('toApi envia null EXPLÍCITO para limpar campos no PATCH', () => {
+    // Omitir o campo deixaria o valor antigo no servidor — limpar exige null.
+    const body = tarefaToApi({ titulo: 'X', classe: null, deadline: null })
+    expect(body.classe_id).toBeNull()
+    expect(body.deadline).toBeNull()
+    expect(body.esforco_estimado).toBeNull()
+  })
+
+  it('toApi trata classe string-vazia como null', () => {
+    expect(tarefaToApi({ titulo: 'X', classe: '' }).classe_id).toBeNull()
   })
 })
 

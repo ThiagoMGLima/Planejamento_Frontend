@@ -179,9 +179,10 @@ export default function EventPanel({ eventId }) {
         )}
       </div>
 
-      {/* Conclusão — só para eventos/ocorrências rastreáveis */}
-      {form.rastrear_conclusao && (
-        <div className="panel-section">
+      {/* Ações da instância: Concluir só quando rastreável; Remarcar sempre
+          (devolve a tarefa de origem ao Inbox). */}
+      <div className="panel-section">
+        {form.rastrear_conclusao && (
           <div className="panel-section__row">
             <span className="field__label">
               Status{instance.recorrente ? ' (esta ocorrência)' : ''}
@@ -190,7 +191,9 @@ export default function EventPanel({ eventId }) {
               {labelStatus(status)}
             </span>
           </div>
-          <div className="panel-section__actions">
+        )}
+        <div className="panel-section__actions">
+          {form.rastrear_conclusao && (
             <button
               className="btn btn--done"
               type="button"
@@ -199,16 +202,16 @@ export default function EventPanel({ eventId }) {
             >
               ✓ Concluir
             </button>
-            <button
-              className="btn btn--ghost"
-              type="button"
-              onClick={() => store.remarcar(instance)}
-            >
-              ↻ Remarcar
-            </button>
-          </div>
+          )}
+          <button
+            className="btn btn--ghost"
+            type="button"
+            onClick={() => store.remarcar(instance)}
+          >
+            ↻ Remarcar
+          </button>
         </div>
-      )}
+      </div>
 
       <footer className="panel-footer">
         <button

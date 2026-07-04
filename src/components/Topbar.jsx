@@ -1,12 +1,10 @@
 import { useStore } from '../store/store.jsx'
 import { usePlanejamento } from '../store/planejamento.jsx'
 import { rangeLabel, fromDateISO } from '../lib/dates.js'
-import { statusEfetivo } from '../lib/status.js'
 import { useTheme } from '../lib/theme.jsx'
 import { useEditar } from '../store/editar.jsx'
 import {
   IconAlert,
-  IconCheck,
   IconChevronLeft,
   IconChevronRight,
   IconLogo,
@@ -21,8 +19,8 @@ import {
 /**
  * Topbar (52px) — store-driven (handoff §3). Segmented Dia/Semana/Mês, setas
  * ±1 dia/7 dias/1 mês + "Hoje", rótulo de período, pílula de Pendentes (só com
- * N>0, abre o painel) e ações. Concluir/Remarcar/Salvar agem sobre o evento
- * selecionado quando há um.
+ * N>0, abre o painel) e ações GLOBAIS. As ações por evento (Concluir/Remarcar/
+ * Salvar/Excluir) vivem no painel que abre ao clicar no evento — não aqui.
  */
 const VIEWS = [
   { id: 'dia', label: 'Dia' },
@@ -49,11 +47,6 @@ export default function Topbar() {
 
   // Pendência derivada (status_efetivo) sobre instâncias da janela recente.
   const pendentes = store.pendingInstances().length
-
-  const sel = store.selectedInstance
-  const selStatus = sel ? statusEfetivo(sel, store.now) : undefined
-  const selRastreavel =
-    sel?.rastrear_conclusao && selStatus !== 'CONCLUIDO' && selStatus !== 'REMARCADO'
 
   return (
     <header className="topbar">
@@ -120,30 +113,6 @@ export default function Topbar() {
             <IconAlert size={12} /> Pendentes · {pendentes}
           </button>
         )}
-        <button
-          className="btn btn--done"
-          type="button"
-          disabled={!selRastreavel}
-          onClick={() => sel && store.openConcluir(sel)}
-        >
-          <IconCheck size={14} /> Concluir
-        </button>
-        <button
-          className="btn btn--ghost"
-          type="button"
-          disabled={!sel}
-          onClick={() => sel && store.remarcar(sel)}
-        >
-          <IconRotate size={13} /> Remarcar
-        </button>
-        <button
-          className="btn btn--ui"
-          type="button"
-          disabled={!sel}
-          onClick={() => sel && store.openEventPanel(sel.eventoId, sel)}
-        >
-          Salvar
-        </button>
         <button
           className="btn btn--ghost"
           type="button"

@@ -266,6 +266,8 @@ export function StoreProvider({ children }) {
           selectedId: instance ? instance.id : eventId,
           selectedInstance: instance,
         }),
+      openTarefaPanel: (tarefaId) =>
+        dispatch({ type: 'OPEN_PANEL', panel: { type: 'tarefa', tarefaId } }),
       openPendingPanel: () => dispatch({ type: 'OPEN_PANEL', panel: { type: 'pendentes' } }),
       openConcluir: (instance) =>
         dispatch({
