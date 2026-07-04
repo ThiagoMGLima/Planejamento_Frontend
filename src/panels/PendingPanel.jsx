@@ -1,6 +1,8 @@
 import { useStore } from '../store/store.jsx'
 import SidePanel from '../components/SidePanel.jsx'
 import { formatTime, sameDay, WEEKDAYS_SHORT, MONTHS_SHORT } from '../lib/dates.js'
+import { corParaTema } from '../lib/colors.js'
+import { useTheme } from '../lib/theme.jsx'
 
 /**
  * Painel de Pendentes (handoff §4) — lista de itens que passaram do horário sem
@@ -9,6 +11,7 @@ import { formatTime, sameDay, WEEKDAYS_SHORT, MONTHS_SHORT } from '../lib/dates.
  */
 export default function PendingPanel() {
   const store = useStore()
+  const { theme } = useTheme()
   // Pendência DERIVADA (status_efetivo) — inclui eventos que venceram sozinhos
   // e ocorrências recorrentes pendentes na janela recente.
   const pendentes = store.pendingInstances()
@@ -23,7 +26,10 @@ export default function PendingPanel() {
             const classe = store.classeById(inst.classe)
             return (
               <li key={inst.id} className="pending__item">
-                <span className="pending__acc" style={{ background: classe?.cor?.st }} />
+                <span
+                  className="pending__acc"
+                  style={{ background: classe?.cor ? corParaTema(classe.cor, theme).st : undefined }}
+                />
                 <div className="pending__body">
                   <div className="pending__title">{inst.titulo}</div>
                   <div className="pending__when mono">
@@ -35,7 +41,7 @@ export default function PendingPanel() {
                     className="btn btn--done btn--sm"
                     type="button"
                     title="Concluir"
-                    onClick={() => store.concluir(inst)}
+                    onClick={() => store.openConcluir(inst)}
                   >
                     ✓
                   </button>

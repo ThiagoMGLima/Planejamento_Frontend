@@ -21,7 +21,11 @@ body {
   font-family: var(--font-ui);
   font-size: var(--fs-body);
   color: var(--ink);
-  background: var(--page);
+  /* Wash violeta sutil nos cantos: dá profundidade sem competir com o conteúdo. */
+  background:
+    radial-gradient(1100px 520px at 88% -12%, var(--wash-a), transparent 62%),
+    radial-gradient(900px 480px at -8% 112%, var(--wash-b), transparent 58%), var(--page);
+  background-attachment: fixed;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
@@ -43,4 +47,52 @@ button {
 .mono {
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
+}
+
+/* ---- Foco visível (teclado) — anel único da UI, some no clique --------- */
+:where(button, [role='button'], input, select, textarea, a):focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--ui) 24%, transparent);
+}
+
+/* ---- Scrollbars discretas, coerentes com as hairlines ------------------ */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--hairline-strong) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: var(--hairline-strong);
+  border-radius: 8px;
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: var(--muted);
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* ---- Acessibilidade: quem pediu menos movimento, recebe menos ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

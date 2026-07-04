@@ -66,6 +66,18 @@ describe('request / contrato de URL', () => {
     expect(global.fetch.mock.calls[1][0]).toBe(`${BASE_URL}/eventos/e1/remarcar/?escopo=serie`)
   })
 
+  it('concluir envia real_min no corpo quando informado (C3)', async () => {
+    mockFetch(async () => jsonResponse({}, 200))
+    await api.eventos.concluir('e1', { escopo: 'serie', realMin: 90 })
+    expect(JSON.parse(global.fetch.mock.calls[0][1].body)).toEqual({ real_min: 90 })
+  })
+
+  it('concluir sem realMin manda corpo vazio (retrocompatível)', async () => {
+    mockFetch(async () => jsonResponse({}, 200))
+    await api.eventos.concluir('e1', { escopo: 'serie' })
+    expect(JSON.parse(global.fetch.mock.calls[0][1].body)).toEqual({})
+  })
+
   it('lança ApiError em status >= 400 com corpo', async () => {
     mockFetch(async () => jsonResponse({ detail: 'não encontrado' }, 404))
     await expect(request('/eventos/zzz/')).rejects.toBeInstanceOf(ApiError)

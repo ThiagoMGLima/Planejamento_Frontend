@@ -1,11 +1,13 @@
 import { useStore } from '../store/store.jsx'
+import { usePlanejamento } from '../store/planejamento.jsx'
 import DayColumn from '../components/DayColumn.jsx'
-import { scheduleTarefaDrop } from '../lib/schedule.js'
+import { scheduleTarefaDrop, moverEventoDrop } from '../lib/schedule.js'
 import {
   rulerHours,
   formatHour,
   sameDay,
   toDateISO,
+  fromDateISO,
   WEEKDAYS_SHORT,
   MONTHS_SHORT,
   HOUR_PX,
@@ -18,7 +20,8 @@ import {
  */
 export default function DayView() {
   const store = useStore()
-  const day = new Date(store.cursorISO)
+  const plan = usePlanejamento()
+  const day = fromDateISO(store.cursorISO)
   const hours = rulerHours()
   const today = store.now
   const isToday = sameDay(day, today)
@@ -64,7 +67,9 @@ export default function DayView() {
             classeById={store.classeById}
             onOpen={(inst) => store.openEventPanel(inst.eventoId, inst)}
             onDropTarefa={(tarefaId, inicio) => scheduleTarefaDrop(store, tarefaId, inicio)}
+            onMoveEvento={(payload, inicio) => moverEventoDrop(store, payload, inicio)}
             inset={6}
+            ghosts={plan.previewSessoes.filter((g) => sameDay(g.inicio, day))}
           />
         </div>
       </div>

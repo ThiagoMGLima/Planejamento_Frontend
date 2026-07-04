@@ -1,12 +1,14 @@
 import { useStore } from '../store/store.jsx'
+import { usePlanejamento } from '../store/planejamento.jsx'
 import DayColumn from '../components/DayColumn.jsx'
-import { scheduleTarefaDrop } from '../lib/schedule.js'
+import { scheduleTarefaDrop, moverEventoDrop } from '../lib/schedule.js'
 import {
   weekDays,
   rulerHours,
   formatHour,
   sameDay,
   toDateISO,
+  fromDateISO,
   WEEKDAYS_SHORT,
   HOUR_PX,
 } from '../lib/dates.js'
@@ -18,7 +20,8 @@ import {
  */
 export default function WeekView() {
   const store = useStore()
-  const days = weekDays(new Date(store.cursorISO))
+  const plan = usePlanejamento()
+  const days = weekDays(fromDateISO(store.cursorISO))
   const hours = rulerHours()
   const today = store.now
   const bodyHeight = hours.length * HOUR_PX
@@ -75,7 +78,9 @@ export default function WeekView() {
               classeById={store.classeById}
               onOpen={(inst) => store.openEventPanel(inst.eventoId, inst)}
               onDropTarefa={(tarefaId, inicio) => scheduleTarefaDrop(store, tarefaId, inicio)}
+              onMoveEvento={(payload, inicio) => moverEventoDrop(store, payload, inicio)}
               inset={3}
+              ghosts={plan.previewSessoes.filter((g) => sameDay(g.inicio, day))}
             />
           ))}
         </div>

@@ -1,5 +1,9 @@
 import { formatTime } from '../lib/dates.js'
 import { statusEfetivo } from '../lib/status.js'
+import { corParaTema } from '../lib/colors.js'
+import { useTheme } from '../lib/theme.jsx'
+import { useEditar } from '../store/editar.jsx'
+import { EVENTO_DND_MIME } from '../lib/schedule.js'
 
 /**
  * Bloco de evento (handoff §3). Regra inviolável: a COR vem sempre da classe; o
@@ -19,10 +23,16 @@ export default function EventBlock({
   style,
   onClick,
 }) {
+  const { theme } = useTheme()
+  const { editando } = useEditar()
   const status = statusEfetivo(instance, now)
   const pendente = status === 'PENDENTE'
   const concluido = status === 'CONCLUIDO'
-  const cor = classe?.cor ?? { bg: '#eee', st: '#ccc', tx: '#333' }
+  const cor = corParaTema(classe?.cor ?? { bg: '#eee', st: '#ccc', tx: '#333' }, theme)
+
+  // No modo Editar todo evento é movível: simples atualiza a série; ocorrência
+  // recorrente grava só o override daquele dia (não afeta as demais).
+  const arrastavel = editando
 
   const blockStyle = {
     ...style,
@@ -38,12 +48,34 @@ export default function EventBlock({
     pendente && 'event--pend',
     concluido && 'event--done',
     selected && 'event--selected',
+    arrastavel && 'event--arrastavel',
   ]
     .filter(Boolean)
     .join(' ')
 
+  function onDragStart(e) {
+    const durMin = Math.round((new Date(instance.fim) - new Date(instance.inicio)) / 60000)
+    e.dataTransfer.setData(
+      EVENTO_DND_MIME,
+      JSON.stringify({
+        eventoId: instance.eventoId,
+        durMin,
+        inicioISO: instance.inicio,
+        occDateISO: instance.occDateISO ?? null,
+      }),
+    )
+    e.dataTransfer.effectAllowed = 'move'
+  }
+
   return (
-    <button type="button" className={cls} style={blockStyle} onClick={onClick}>
+    <button
+      type="button"
+      className={cls}
+      style={blockStyle}
+      onClick={onClick}
+      draggable={arrastavel}
+      onDragStart={arrastavel ? onDragStart : undefined}
+    >
       <span className="event__title">
         {pendente && '⚠ '}
         {concluido && '✓ '}

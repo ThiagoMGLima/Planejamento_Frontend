@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import EventBlock from './EventBlock.jsx'
 import NowLine from './NowLine.jsx'
+import { EVENTO_DND_MIME } from '../lib/schedule.js'
 import {
   rulerHours,
   gridPosition,
@@ -21,8 +22,11 @@ import {
  *   day: Date, instances: any[], isToday?: boolean, now: Date,
  *   selectedId: string|null, classeById: Function,
  *   onOpen: (instance:any)=>void, onDropTarefa: (tarefaId:string, inicio:Date)=>void,
- *   inset?: number
+ *   inset?: number, ghosts?: {key:string, inicio:Date, fim:Date, titulo:string}[]
  * }} props
+ *
+ * `ghosts` (opcional): sessões PROPOSTAS por um cenário (Rotina Inteligente, W3),
+ * desenhadas com opacidade reduzida (padrão "ghost") — preview, não eventos reais.
  */
 export default function DayColumn({
   day,
@@ -33,7 +37,9 @@ export default function DayColumn({
   classeById,
   onOpen,
   onDropTarefa,
+  onMoveEvento,
   inset = 3,
+  ghosts = [],
 }) {
   const hours = rulerHours()
   const [ghost, setGhost] = useState(null) // { top, label } | null
@@ -52,9 +58,19 @@ export default function DayColumn({
 
   function onDrop(e) {
     e.preventDefault()
-    const tarefaId = e.dataTransfer.getData('text/plain')
     const { hour } = ghostFromEvent(e)
     setGhost(null)
+    // Mover evento agendado (modo Editar) tem prioridade sobre agendar tarefa.
+    const eventoRaw = e.dataTransfer.getData(EVENTO_DND_MIME)
+    if (eventoRaw) {
+      try {
+        onMoveEvento?.(JSON.parse(eventoRaw), dateAtHour(day, hour))
+      } catch {
+        /* payload inválido — ignora */
+      }
+      return
+    }
+    const tarefaId = e.dataTransfer.getData('text/plain')
     if (tarefaId) onDropTarefa(tarefaId, dateAtHour(day, hour))
   }
 
@@ -82,6 +98,20 @@ export default function DayColumn({
             style={{ position: 'absolute', top, height, left: inset, right: inset }}
             onClick={() => onOpen(inst)}
           />
+        )
+      })}
+
+      {ghosts.map((g) => {
+        const { top, height } = gridPosition(g.inicio, g.fim)
+        return (
+          <div
+            key={g.key}
+            className="sessao-ghost"
+            style={{ position: 'absolute', top, height, left: inset, right: inset }}
+            title={g.titulo}
+          >
+            <span className="sessao-ghost__t">{g.titulo}</span>
+          </div>
         )
       })}
 

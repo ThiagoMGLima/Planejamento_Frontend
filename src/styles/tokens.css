@@ -87,12 +87,93 @@
   --r-btn: 9px; /* botão */
   --r-pill: 7px; /* pílula / segment (6–8px) */
 
-  /* ---- Sombras (§2.4) ------------------------------------------------- */
-  --sh-event: 0 1px 2px rgba(20, 18, 40, 0.07);
-  --sh-card: 0 1px 2px rgba(20, 18, 40, 0.05);
-  --sh-panel: -8px 0 24px rgba(20, 18, 40, 0.1);
-  --sh-selected: 0 2px 8px rgba(20, 18, 40, 0.14);
+  /* ---- Sombras (§2.4) — em camadas: contato + ambiente ----------------- */
+  --sh-event: 0 1px 2px rgba(20, 18, 40, 0.08), 0 2px 6px rgba(20, 18, 40, 0.04);
+  --sh-card: 0 1px 2px rgba(20, 18, 40, 0.06), 0 2px 8px rgba(20, 18, 40, 0.04);
+  --sh-card-hover: 0 2px 4px rgba(20, 18, 40, 0.08), 0 8px 20px rgba(20, 18, 40, 0.08);
+  --sh-panel: -8px 0 32px rgba(20, 18, 40, 0.14), -1px 0 0 rgba(20, 18, 40, 0.04);
+  --sh-selected: 0 2px 6px rgba(20, 18, 40, 0.12), 0 6px 16px rgba(20, 18, 40, 0.1);
+  --sh-pop: 0 4px 12px rgba(20, 18, 40, 0.1), 0 16px 48px rgba(20, 18, 40, 0.16);
 
   /* ---- Scrim do painel lateral (§3) ----------------------------------- */
-  --scrim: rgba(20, 18, 40, 0.1);
+  --scrim: rgba(20, 18, 40, 0.18);
+
+  /* ---- Movimento — durações e curva única da UI ------------------------ */
+  --t-fast: 120ms;
+  --t-med: 220ms;
+  --ease: cubic-bezier(0.2, 0.7, 0.3, 1);
+
+  /* ---- Foco visível (teclado) ------------------------------------------ */
+  --ring: color-mix(in srgb, var(--ui) 55%, transparent);
+
+  /* ---- Wash do fundo da página (véu violeta sutil nos cantos) ---------- */
+  --wash-a: color-mix(in srgb, var(--ui) 5%, transparent);
+  --wash-b: color-mix(in srgb, var(--ui) 3%, transparent);
+}
+
+/* =============================================================================
+   Tema escuro — override das superfícies, neutros, linhas e matizes.
+   Regras do handoff mantidas: cor = classe, estado = tratamento, violeta = UI;
+   só reancoramos os valores para leitura confortável no escuro.
+   ========================================================================== */
+:root[data-theme='dark'] {
+  /* ---- Neutros & superfícies ------------------------------------------ */
+  --ink: #e9e9ef; /* texto primário */
+  --slate: #b0b0ba; /* texto secundário */
+  --muted: #7d7d88; /* metadados, placeholders */
+  --paper: #1c1c22; /* calendário, painel, cards */
+  --page: #121216; /* fundo da app */
+  --sidebar: #17171c; /* barra lateral */
+
+  /* ---- Linhas --------------------------------------------------------- */
+  --hairline: #2a2a31;
+  --hairline-strong: #383840;
+  --grid-line: #26262d;
+
+  /* ---- Cores por classe (rebaixadas p/ fundo escuro) ------------------ */
+  --aula-bg: #16283a;
+  --aula-st: #2f5a86;
+  --aula-tx: #8fbce8;
+  --basica-bg: #2a2a26;
+  --basica-st: #45443c;
+  --basica-tx: #b6b4a6;
+  --estudar-bg: #1e2b12;
+  --estudar-st: #47681f;
+  --estudar-tx: #a7d071;
+  --prova-bg: #331717;
+  --prova-st: #7a3535;
+  --prova-tx: #e79a9a;
+  --trabalho-bg: #10322a;
+  --trabalho-st: #2f7360;
+  --trabalho-tx: #7fd8bd;
+
+  /* ---- Marca / UI — violeta (clareado p/ contraste) ------------------- */
+  --ui: #8b7fe0;
+  --ui-strong: #cdc6f5;
+  --ui-tint: #26243a;
+  --ui-border: #3d3a5c;
+
+  /* ---- Estados -------------------------------------------------------- */
+  --pend: #d99a3a;
+  --pend-bg: #3a2f16;
+  --pend-tx: #e6b869;
+  --done: #8fd45f;
+  --done-bg: #1f3113;
+  --done-st: #3f6b1f;
+  --crit: #e77878;
+
+  /* ---- Sombras (mais fundas no escuro) -------------------------------- */
+  --sh-event: 0 1px 2px rgba(0, 0, 0, 0.45), 0 2px 8px rgba(0, 0, 0, 0.25);
+  --sh-card: 0 1px 2px rgba(0, 0, 0, 0.4), 0 2px 10px rgba(0, 0, 0, 0.22);
+  --sh-card-hover: 0 2px 4px rgba(0, 0, 0, 0.45), 0 10px 24px rgba(0, 0, 0, 0.4);
+  --sh-panel: -8px 0 32px rgba(0, 0, 0, 0.55), -1px 0 0 rgba(255, 255, 255, 0.04);
+  --sh-selected: 0 2px 8px rgba(0, 0, 0, 0.5), 0 8px 20px rgba(0, 0, 0, 0.4);
+  --sh-pop: 0 4px 12px rgba(0, 0, 0, 0.45), 0 20px 56px rgba(0, 0, 0, 0.55);
+
+  /* ---- Scrim ---------------------------------------------------------- */
+  --scrim: rgba(0, 0, 0, 0.55);
+
+  /* ---- Wash do fundo (mais presente no escuro, sem virar roxo) --------- */
+  --wash-a: color-mix(in srgb, var(--ui) 9%, transparent);
+  --wash-b: color-mix(in srgb, var(--ui) 5%, transparent);
 }

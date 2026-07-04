@@ -3,6 +3,8 @@ import { useStore } from '../store/store.jsx'
 import SidePanel from '../components/SidePanel.jsx'
 import { toISO, WEEKDAYS_SHORT } from '../lib/dates.js'
 import { statusEfetivo } from '../lib/status.js'
+import { corParaTema } from '../lib/colors.js'
+import { useTheme } from '../lib/theme.jsx'
 
 /**
  * Painel do Evento (handoff §4) — seletor de classe (define a cor e pré-marca
@@ -15,6 +17,7 @@ import { statusEfetivo } from '../lib/status.js'
  */
 export default function EventPanel({ eventId }) {
   const store = useStore()
+  const { theme } = useTheme()
   const evento = store.eventoById(eventId)
 
   const [form, setForm] = useState(() => fromEvento(evento, store))
@@ -65,7 +68,11 @@ export default function EventPanel({ eventId }) {
   }
 
   return (
-    <SidePanel title="Evento" accent={classe?.cor?.st} onClose={store.closePanel}>
+    <SidePanel
+      title="Evento"
+      accent={classe?.cor ? corParaTema(classe.cor, theme).st : undefined}
+      onClose={store.closePanel}
+    >
       <label className="field">
         <span className="field__label">Título</span>
         <input
@@ -188,7 +195,7 @@ export default function EventPanel({ eventId }) {
               className="btn btn--done"
               type="button"
               disabled={status === 'CONCLUIDO'}
-              onClick={() => store.concluir(instance)}
+              onClick={() => store.openConcluir(instance)}
             >
               ✓ Concluir
             </button>

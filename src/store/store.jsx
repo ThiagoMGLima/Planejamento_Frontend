@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useMemo, useReducer, useState } from 'react'
 import { STORAGE_KEY, buildInitialState } from './seed.js'
 import { makeId } from '../lib/id.js'
-import { addDays, addMonths, toDateISO, toISO } from '../lib/dates.js'
+import { addDays, addMonths, fromDateISO, toDateISO, toISO } from '../lib/dates.js'
 import { expandInstances, instancesOfDay } from '../lib/recurrence.js'
 import { statusEfetivo } from '../lib/status.js'
 
@@ -58,7 +58,7 @@ function reducer(state, action) {
     case 'TODAY':
       return { ...state, cursorISO: toDateISO(new Date()) }
     case 'STEP': {
-      const base = new Date(state.cursorISO)
+      const base = fromDateISO(state.cursorISO)
       const next =
         state.view === 'dia'
           ? addDays(base, action.dir)
@@ -90,6 +90,26 @@ function reducer(state, action) {
       }
     case 'REMOVE_EVENTO':
       return { ...state, eventos: state.eventos.filter((e) => e.id !== action.id) }
+
+    // ---- Mover UMA ocorrência de série (modo Editar) ------------------
+    // Grava um override reposicionado por dia (movidoInicio/movidoFim) sem
+    // tocar nas demais ocorrências; a expansão (recurrence) honra o override.
+    case 'MOVER_OCORRENCIA': {
+      const { eventoId, occDateISO, inicioISO, fimISO } = action
+      return {
+        ...state,
+        eventos: state.eventos.map((e) => {
+          if (e.id !== eventoId) return e
+          const ocorrencias = { ...(e.ocorrencias ?? {}) }
+          ocorrencias[occDateISO] = {
+            ...(ocorrencias[occDateISO] ?? {}),
+            movidoInicio: inicioISO,
+            movidoFim: fimISO,
+          }
+          return { ...e, ocorrencias }
+        }),
+      }
+    }
 
     // ---- Tarefa CRUD --------------------------------------------------
     case 'ADD_TAREFA':
@@ -247,6 +267,14 @@ export function StoreProvider({ children }) {
           selectedInstance: instance,
         }),
       openPendingPanel: () => dispatch({ type: 'OPEN_PANEL', panel: { type: 'pendentes' } }),
+      openConcluir: (instance) =>
+        dispatch({
+          type: 'OPEN_PANEL',
+          panel: { type: 'concluir', instance },
+          selectedId: instance.id,
+          selectedInstance: instance,
+        }),
+      openAgente: () => dispatch({ type: 'OPEN_PANEL', panel: { type: 'agente' } }),
       closePanel: () => dispatch({ type: 'CLOSE_PANEL' }),
 
       // CRUD
@@ -270,6 +298,16 @@ export function StoreProvider({ children }) {
       // máquina de estados por instância
       concluir: (instance) => dispatch({ type: 'CONCLUIR_INST', instance }),
       remarcar: (instance) => dispatch({ type: 'REMARCAR_INST', instance }),
+
+      // mover uma ocorrência de série para outro horário/dia (modo Editar)
+      moverOcorrencia: (eventoId, occDateISO, inicio, fim) =>
+        dispatch({
+          type: 'MOVER_OCORRENCIA',
+          eventoId,
+          occDateISO,
+          inicioISO: toISO(inicio),
+          fimISO: toISO(fim),
+        }),
 
       // leitura / expansão
       classeById: (id) => state.classes.find((c) => c.id === id) ?? null,

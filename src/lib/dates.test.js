@@ -7,10 +7,31 @@ import {
   startOfWeek,
   weekDays,
   sameDay,
+  fromDateISO,
+  toDateISO,
+  addDays,
   HOUR_PX,
   DAY_START,
   DAY_END,
 } from './dates.js'
+
+describe('fromDateISO (âncora local, não UTC)', () => {
+  it('parseia "YYYY-MM-DD" como meia-noite LOCAL (não volta um dia em fuso negativo)', () => {
+    const d = fromDateISO('2026-07-06')
+    expect(d.getFullYear()).toBe(2026)
+    expect(d.getMonth()).toBe(6) // julho
+    expect(d.getDate()).toBe(6) // com new Date('2026-07-06') daria 5 em UTC-3
+    expect(d.getHours()).toBe(0)
+  })
+
+  it('navegar ±1 dia é reversível e sai do lugar (regressão do bug de fuso)', () => {
+    const hoje = '2026-07-06'
+    const amanha = toDateISO(addDays(fromDateISO(hoje), 1))
+    expect(amanha).toBe('2026-07-07')
+    const ontem = toDateISO(addDays(fromDateISO(hoje), -1))
+    expect(ontem).toBe('2026-07-05')
+  })
+})
 
 describe('snap de 15min (arrasto)', () => {
   it('y=0 cai no início da faixa (06:00)', () => {

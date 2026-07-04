@@ -1,17 +1,22 @@
+import { useState } from 'react'
 import { useStore } from '../store/store.jsx'
+import { usePlanejamento } from '../store/planejamento.jsx'
 import MiniCalendar from './MiniCalendar.jsx'
 import InboxCard from './InboxCard.jsx'
+import NovaTarefaForm from './NovaTarefaForm.jsx'
 
 /**
- * Sidebar (232px) — mini-calendário (oculto na view Mês, decisão do handoff §4)
- * + Inbox de tarefas (cards a partir do store). O arrasto card → horário chega
- * no Marco 3; aqui clicar num card abre o painel do evento futuro (placeholder
- * via seleção) — por ora os cards só listam.
+ * Sidebar (232px) — mini-calendário (oculto na view Mês, handoff §4) + Inbox de
+ * tarefas. Em modo normal os cards arrastam para o horário; em **modo Planejar**
+ * (Rotina Inteligente, W1) o Inbox vira seletor: chip "selecionar p/ plano" no
+ * título e cada card com checkbox (elegível) ou motivo de inelegibilidade.
  */
 export default function Sidebar() {
   const store = useStore()
-  const inbox = store.tarefas.filter((t) => t.status === 'INBOX')
+  const plan = usePlanejamento()
+  const [criando, setCriando] = useState(false)
   const showMini = store.view !== 'mes'
+  const selecao = plan.modoPlanejar
 
   return (
     <aside className="sidebar">
@@ -22,13 +27,50 @@ export default function Sidebar() {
       )}
 
       <section className="sidebar__block sidebar__block--grow">
-        <h2 className="sidebar__title">Inbox</h2>
-        {inbox.length === 0 ? (
+        <h2 className="sidebar__title">
+          Inbox
+          {selecao && (
+            <>
+              <span className="sidebar__chip mono">selecionar p/ plano</span>
+              {plan.elegiveisCount > 0 && (
+                <button
+                  type="button"
+                  className="sidebar__selall"
+                  onClick={plan.todasSelecionadas ? plan.limparSelecao : plan.selecionarTodas}
+                >
+                  {plan.todasSelecionadas ? 'Limpar' : `Todas (${plan.elegiveisCount})`}
+                </button>
+              )}
+            </>
+          )}
+          {!selecao && (
+            <button
+              type="button"
+              className="sidebar__add"
+              onClick={() => setCriando((v) => !v)}
+              aria-label="Nova tarefa"
+              aria-expanded={criando}
+            >
+              {criando ? '✕' : '+ Nova'}
+            </button>
+          )}
+        </h2>
+        {!selecao && criando && <NovaTarefaForm onClose={() => setCriando(false)} />}
+        {plan.inbox.length === 0 ? (
           <p className="sidebar__empty">Tudo agendado — Inbox vazio.</p>
         ) : (
           <div className="inbox">
-            {inbox.map((t) => (
-              <InboxCard key={t.id} tarefa={t} classe={store.classeById(t.classe)} />
+            {plan.inbox.map(({ tarefa, elegivel, motivo }) => (
+              <InboxCard
+                key={tarefa.id}
+                tarefa={tarefa}
+                classe={store.classeById(tarefa.classe)}
+                modo={selecao ? 'selecao' : 'normal'}
+                elegivel={elegivel}
+                motivo={motivo}
+                selecionada={plan.estaSelecionada(tarefa.id)}
+                onToggle={plan.toggleTarefa}
+              />
             ))}
           </div>
         )}

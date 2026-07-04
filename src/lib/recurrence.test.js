@@ -86,6 +86,43 @@ describe('expandInstances — semanal', () => {
     expect(inst[0].occDateISO).toBe('2026-06-17')
     expect(inst[0].status).toBe('CONCLUIDO')
   })
+
+  it('reposiciona ocorrência movida no MESMO dia (só muda o horário)', () => {
+    const aula = aulaSemanal({
+      ocorrencias: {
+        '2026-06-15': {
+          movidoInicio: new Date(2026, 5, 15, 14, 0).toISOString(),
+          movidoFim: new Date(2026, 5, 15, 16, 0).toISOString(),
+        },
+      },
+    })
+    const inst = expandInstances([aula], { start: monday, end: sunday })
+    expect(inst).toHaveLength(2) // Seg(movida) + Qua(natural)
+    const seg = inst.find((i) => i.occDateISO === '2026-06-15')
+    expect(new Date(seg.inicio).getHours()).toBe(14) // horário movido, não 8h
+    expect(seg.id).toBe('r1@2026-06-15') // identidade preservada
+  })
+
+  it('move ocorrência para OUTRA semana: some da origem, aparece no destino', () => {
+    const nextMon = new Date(2026, 5, 22)
+    const aula = aulaSemanal({
+      ocorrencias: {
+        '2026-06-15': {
+          movidoInicio: new Date(2026, 5, 23, 8, 0).toISOString(), // terça da semana seguinte
+          movidoFim: new Date(2026, 5, 23, 10, 0).toISOString(),
+        },
+      },
+    })
+    // Semana original: a segunda movida NÃO aparece; só a quarta natural.
+    const semanaOrig = expandInstances([aula], { start: monday, end: sunday })
+    expect(semanaOrig.map((i) => i.occDateISO).sort()).toEqual(['2026-06-17'])
+
+    // Semana destino: a ocorrência movida aparece na terça (23), + as naturais.
+    const semanaDest = expandInstances([aula], { start: nextMon, end: new Date(2026, 5, 28) })
+    const movida = semanaDest.find((i) => i.occDateISO === '2026-06-15')
+    expect(movida).toBeTruthy()
+    expect(new Date(movida.inicio).getDate()).toBe(23)
+  })
 })
 
 describe('expandInstances — MENSAL', () => {

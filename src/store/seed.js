@@ -12,8 +12,8 @@ import { startOfWeek, addDays, toISO, toDateISO } from '../lib/dates.js'
  * @typedef {import('./types.js').Evento} Evento
  */
 
-/** Chave de persistência em localStorage (igual ao protótipo). @type {string} */
-export const STORAGE_KEY = 'planejador:v2'
+/** Chave de persistência em localStorage. Bump força re-seed. @type {string} */
+export const STORAGE_KEY = 'planejador:v3'
 
 /**
  * Cinco classes padrão. Cores idênticas às custom properties de tokens.css.
@@ -107,6 +107,7 @@ export function buildInitialState(now = new Date()) {
   const ws = startOfWeek(now)
   /** @type {Tarefa[]} */
   const tarefas = [
+    // Elegíveis (prazo + esforço + classe) — entram no montador de rotina.
     {
       id: 'seed_t1',
       titulo: 'Estudar P1 Cálculo',
@@ -116,13 +117,38 @@ export function buildInitialState(now = new Date()) {
       status: 'INBOX',
     },
     {
+      id: 'seed_t4',
+      titulo: 'Trabalho de Física 2',
+      classe: 'trabalho',
+      deadline: toDateISO(addDays(ws, 5)),
+      esforco_estimado: 240,
+      status: 'INBOX',
+    },
+    {
+      id: 'seed_t5',
+      titulo: 'Estudar p/ prova de Cálculo',
+      classe: 'prova',
+      deadline: toDateISO(addDays(ws, 8)),
+      esforco_estimado: 300,
+      status: 'INBOX',
+    },
+    {
+      id: 'seed_t6',
+      titulo: 'Lista de Estruturas de Dados',
+      classe: 'estudar',
+      deadline: toDateISO(addDays(ws, 7)),
+      esforco_estimado: 120,
+      status: 'INBOX',
+    },
+    // Inelegíveis — demonstram os motivos no modo Planejar (W1).
+    {
       id: 'seed_t2',
       titulo: 'Relatório Física',
       classe: 'trabalho',
       esforco_estimado: 120,
       status: 'INBOX',
-    },
-    { id: 'seed_t3', titulo: 'Ler capítulo 4', esforco_estimado: 60, status: 'INBOX' },
+    }, // sem prazo
+    { id: 'seed_t3', titulo: 'Ler capítulo 4', esforco_estimado: 60, status: 'INBOX' }, // sem classe/prazo
   ]
   /** @type {Evento[]} */
   const eventos = [
@@ -146,6 +172,16 @@ export function buildInitialState(now = new Date()) {
     ev(ws, 2, 12, 13, 'Almoço', 'basica'),
     ev(ws, 3, 10, 12, 'Prova de Física', 'prova'),
     ev(ws, 4, 19, 20.5, 'Estudar Cálculo', 'estudar', {
+      rastrear_conclusao: true,
+      status: 'AGENDADO',
+    }),
+    // Sessão de hoje (exercita "Hoje não") e uma noturna futura (Replanejar puxa
+    // para mais cedo) — dão material ao W4 num seed novo.
+    evAbs(now, 19, 20, 'Preparar seminário', 'estudar', {
+      rastrear_conclusao: true,
+      status: 'AGENDADO',
+    }),
+    evAbs(addDays(now, 2), 21.5, 23, 'Revisar Estruturas', 'estudar', {
       rastrear_conclusao: true,
       status: 'AGENDADO',
     }),

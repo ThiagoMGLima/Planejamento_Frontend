@@ -71,6 +71,17 @@ export function toDateISO(date) {
   return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`
 }
 
+/**
+ * Parse de "YYYY-MM-DD" para meia-noite LOCAL. `new Date("YYYY-MM-DD")` seria
+ * interpretado como UTC (voltando um dia em fusos negativos, como o BR) — por
+ * isso a âncora de navegação (cursorISO) SEMPRE passa por aqui, nunca por
+ * `new Date` direto.
+ */
+export function fromDateISO(cursorISO) {
+  const [y, m, d] = String(cursorISO).split('-').map(Number)
+  return new Date(y, (m ?? 1) - 1, d ?? 1)
+}
+
 /** Meia-noite local do dia de `date` (não muta o original). */
 export function startOfDay(date) {
   const d = toDate(date)
@@ -191,7 +202,7 @@ export function monthGrid(date) {
  * @returns {{ start: Date, end: Date }}
  */
 export function viewWindow(view, cursorISO) {
-  const cursor = new Date(cursorISO)
+  const cursor = fromDateISO(cursorISO)
   if (view === 'dia') {
     const start = startOfDay(cursor)
     return { start, end: addDays(start, 1) }
